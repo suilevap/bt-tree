@@ -5,36 +5,28 @@ using System.Text;
 
 namespace BT
 {
-    public class BTSelector : BTNode
+    public class BTSelector<T> : BTGroupNode<T>
     {
-        public BTSelector(string name, params BTNode[] childs)
-            :base(name, childs)
+        internal BTSelector(string name, params BTGroupNode<T>[] childs)
+            : base(name, childs)
         {
-            
+
         }
 
-        internal override BTStatus Execute(BTContext context, bool currentPathRunning)
+        internal override BTStatus Execute(BTContext<T> context)
         {
-            BTNode lastRunningNode = null;
-            bool currentPathRunning = context.IsCurrentPathRunning;
-            if (context.IsCurrentPathRunning)
-            {
-                lastRunningNode = context.LastPath[context.CurrentPath.Count];
-            }
 
             BTStatus status = BTStatus.Fail;
-            BTNode runningNode = null;
-            foreach (BTNode node in Childs)
+            BTGroupNode<T> runningNode = null;
+            for (int i = 0; i < Childs.Length; i++)
             {
+                BTGroupNode<T> node = Childs[i];
                 if (node == null)
                     throw new NullReferenceException("BTNode child can not be null");
 
-                context.CurrentPath.Add(node);
-                context.IsCurrentPathRunning = currentPathRunning && (node == lastRunningNode);
-
+                context.PushVisitingNode(i, node);
                 status = node.Execute(context);
-
-                context.CurrentPath.RemoveLast();
+                context.PopVisitingNode();
 
                 if (status == BTStatus.Ok || status == BTStatus.Running)
                 {
@@ -42,8 +34,8 @@ namespace BT
                     break;
                 }
             }
-            context.IsCurrentPathRunning = currentPathRunning;
             return status;
         }
+
     }
 }

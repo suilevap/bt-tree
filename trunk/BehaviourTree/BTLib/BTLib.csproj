@@ -40,12 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BTAction.cs" />
     <Compile Include="BTContext.cs" />
-    <Compile Include="BTNode.cs" />
+    <Compile Include="BTGroupNode.cs" />
     <Compile Include="BTPath.cs" />
     <Compile Include="BTSelector.cs" />
     <Compile Include="BTSequence.cs" />
     <Compile Include="BTStatus.cs" />
+    <Compile Include="BTNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

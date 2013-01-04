@@ -5,15 +5,15 @@ using System.Text;
 
 namespace BT
 {
-    public class BTPath
+    public class BTPath<T>
     {
-        private List<BTNode> _runningNodes;
+        private List<BTGroupNode<T>> _runningNodes;
         private List<int> _runningNodesIndex;
 
 
         public int Count { get { return _runningNodes.Count; } }
         
-        public BTNode this[int index]
+        public BTGroupNode<T> this[int index]
         {
             get { return _runningNodes[index]; }
             set { _runningNodes[index] = value; }
@@ -21,12 +21,12 @@ namespace BT
 
         public BTPath()
         {
-            _runningNodes = new List<BTNode>(16);
+            _runningNodes = new List<BTGroupNode<T>>(16);
             _runningNodesIndex = new List<int>(16);
         }
 
 
-        public void Add(int nodeIndex, BTNode node)
+        public void Add(int nodeIndex, BTGroupNode<T> node)
         {
             _runningNodes.Add(node);
             _runningNodesIndex.Add(nodeIndex);

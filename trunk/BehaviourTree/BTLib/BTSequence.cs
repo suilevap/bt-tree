@@ -5,52 +5,37 @@ using System.Text;
 
 namespace BT
 {
-    public class BTSequence:BTNode
+    public class BTSequence<T> : BTGroupNode<T>
     {
-        public BTSequence(string name, params BTNode[] childs)
-            :base(name, childs)
+        internal BTSequence(string name, params BTGroupNode<T>[] childs)
+            : base(name, childs)
         {
-            
+
         }
 
-        internal override BTStatus Execute(BTContext context, bool currentPathRunning)
+        internal override BTStatus Execute(BTContext<T> context)
         {
-            BTNode lastRunningNode = null;
-            bool currentPathRunning = context.IsCurrentPathRunning;
-            int lastRunningNodeIndex = 0;
-            if (context.IsCurrentPathRunning)
-            {
-                lastRunningNode = context.LastPath[context.CurrentPath.Count];
-                lastRunningNodeIndex = context.LastPath.GetNodeIndex(context.CurrentPath.Count);
-            }
 
             BTStatus status = BTStatus.Fail;
-            BTNode runningNode = null;
-            for (int i = lastRunningNodeIndex; i < Childs.Length; i++ )
+
+            int startIndex = 0;
+            context.TryGetCurrentRunningChildIndex(ref startIndex);
+
+            for (int i = startIndex; i < Childs.Length; i++)
             {
-                BTNode node = Childs[i];
+                BTGroupNode<T> node = Childs[i];
+                if (node == null)
+                    throw new NullReferenceException("BTNode child can not be null");
 
-            }
+                context.PushVisitingNode(i, node);
+                status = node.Execute(context);
+                context.PopVisitingNode();
 
-                foreach (BTNode node in Childs)
+                if (status == BTStatus.Fail || status == BTStatus.Running)
                 {
-                    if (node == null)
-                        throw new NullReferenceException("BTNode child can not be null");
-
-                    context.CurrentPath.Add(node);
-                    context.IsCurrentPathRunning = currentPathRunning && (node == lastRunningNode);
-
-                    status = node.Execute(context);
-
-                    context.CurrentPath.RemoveLast();
-
-                    if (status == BTStatus.Ok || status == BTStatus.Running)
-                    {
-                        runningNode = node;
-                        break;
-                    }
+                    break;
                 }
-            context.IsCurrentPathRunning = currentPathRunning;
+            }
             return status;
         }
     }
