@@ -5,13 +5,13 @@ using System.Text;
 
 namespace BT
 {
-    internal class BTContext<T>
+    internal class Context<T>
     {
         internal T ExecutionContext {get; private set;}
-        private BTGroupNode<T> _root;
+        private CompositeNode<T> _root;
 
-        private BTPath<T> _currentPath;
-        private BTPath<T> _lastRunningPath;
+        private Path<T> _currentPath;
+        private Path<T> _lastRunningPath;
 
         private Stack<bool> _isNodeRunning;
         ///// <summary>
@@ -21,22 +21,22 @@ namespace BT
 
 
 
-        internal BTContext(BTGroupNode<T> root, T executionContext)
+        internal Context(CompositeNode<T> root, T executionContext)
         {
             ExecutionContext = executionContext;
             //IsCurrentPathRunning = false;
-            _currentPath = new BTPath<T>();
-            _lastRunningPath = new BTPath<T>();
+            _currentPath = new Path<T>();
+            _lastRunningPath = new Path<T>();
             _isNodeRunning = new Stack<bool>(16);
             _root = root;
         }
 
-        internal BTStatus Run()
+        internal Status Run()
         {
             return _root.Execute(this);
         }
 
-        internal void PushVisitingNode(int nodeIndex, BTGroupNode<T> node)
+        internal void PushVisitingNode(int nodeIndex, CompositeNode<T> node)
         {
             int runningIndex = -1;
             bool isCurrentPathRuning = TryGetCurrentRunningChildIndex(ref runningIndex);

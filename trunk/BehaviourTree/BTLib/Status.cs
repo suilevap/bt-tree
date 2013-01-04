@@ -1,6 +1,6 @@
 namespace BT
 {
-    public enum BTStatus
+    public enum Status
     {
         Fail,
         Ok,

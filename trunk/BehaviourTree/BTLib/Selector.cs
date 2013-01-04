@@ -5,22 +5,22 @@ using System.Text;
 
 namespace BT
 {
-    public class BTSelector<T> : BTGroupNode<T>
+    public class Selector<T> : CompositeNode<T>
     {
-        internal BTSelector(string name, params BTGroupNode<T>[] childs)
+        internal Selector(string name, params CompositeNode<T>[] childs)
             : base(name, childs)
         {
 
         }
 
-        internal override BTStatus Execute(BTContext<T> context)
+        internal override Status Execute(Context<T> context)
         {
 
-            BTStatus status = BTStatus.Fail;
-            BTGroupNode<T> runningNode = null;
+            Status status = Status.Fail;
+            CompositeNode<T> runningNode = null;
             for (int i = 0; i < Childs.Length; i++)
             {
-                BTGroupNode<T> node = Childs[i];
+                CompositeNode<T> node = Childs[i];
                 if (node == null)
                     throw new NullReferenceException("BTNode child can not be null");
 
@@ -28,7 +28,7 @@ namespace BT
                 status = node.Execute(context);
                 context.PopVisitingNode();
 
-                if (status == BTStatus.Ok || status == BTStatus.Running)
+                if (status == Status.Ok || status == Status.Running)
                 {
                     runningNode = node;
                     break;

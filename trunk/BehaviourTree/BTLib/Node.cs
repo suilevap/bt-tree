@@ -5,8 +5,8 @@ using System.Text;
 
 namespace BT
 {
-    public abstract class BTNode<T>
+    public abstract class Node<T>
     {
-        internal abstract BTStatus Execute(BTContext<T> context);
+        internal abstract Status Execute(Context<T> context);
     }
 }

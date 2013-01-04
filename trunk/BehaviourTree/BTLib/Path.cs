@@ -5,28 +5,28 @@ using System.Text;
 
 namespace BT
 {
-    public class BTPath<T>
+    public class Path<T>
     {
-        private List<BTGroupNode<T>> _runningNodes;
+        private List<Node<T>> _runningNodes;
         private List<int> _runningNodesIndex;
 
 
         public int Count { get { return _runningNodes.Count; } }
-        
-        public BTGroupNode<T> this[int index]
+
+        public Node<T> this[int index]
         {
             get { return _runningNodes[index]; }
             set { _runningNodes[index] = value; }
         }
 
-        public BTPath()
+        public Path()
         {
-            _runningNodes = new List<BTGroupNode<T>>(16);
+            _runningNodes = new List<Node<T>>(16);
             _runningNodesIndex = new List<int>(16);
         }
 
 
-        public void Add(int nodeIndex, BTGroupNode<T> node)
+        public void Add(int nodeIndex, Node<T> node)
         {
             _runningNodes.Add(node);
             _runningNodesIndex.Add(nodeIndex);

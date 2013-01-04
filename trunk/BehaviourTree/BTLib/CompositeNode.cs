@@ -5,12 +5,12 @@ using System.Text;
 
 namespace BT
 {
-    public abstract class BTGroupNode<T> : BTNode<T>
+    public abstract class CompositeNode<T> : Node<T>
     {
-        public BTGroupNode<T>[] Childs { get; protected set; }
+        public CompositeNode<T>[] Childs { get; protected set; }
         public string Name { get; protected set; }
 
-        protected BTGroupNode(string name, params BTGroupNode<T>[] childs)
+        protected CompositeNode(string name, params CompositeNode<T>[] childs)
         {
             Name = name;
             Childs = childs;
@@ -21,7 +21,7 @@ namespace BT
             StringBuilder sb =new StringBuilder();
             sb.Append(Name);
             sb.Append('(');
-            foreach(BTGroupNode<T> node in Childs)
+            foreach(CompositeNode<T> node in Childs)
             {
                 sb.AppendFormat("{0},", node.ToString());
             }
