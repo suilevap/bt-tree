@@ -1,0 +1,4 @@
+syntax: glob
+*.user
+*/bin/Debug/
+*/obj/*
