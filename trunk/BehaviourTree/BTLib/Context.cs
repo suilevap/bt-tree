@@ -33,7 +33,9 @@ namespace BT
 
         internal Status Run()
         {
-            return _root.Execute(this);
+            Status status = _root.Execute(this);
+
+            return status;
         }
 
         internal void PushVisitingNode(int nodeIndex, CompositeNode<T> node)
@@ -63,6 +65,38 @@ namespace BT
                 result = false;
             }
             return result;
+        }
+
+        internal Status StartNode(int index, CompositeNode<T> node)
+        {
+            Status status;
+            PushVisitingNode(index, node);
+            status = node.Start(this);
+            if (status != Status.Running)
+            {
+                PopVisitingNode();
+            }
+            return status;
+        }
+        internal Status ExecuteNode(int index, CompositeNode<T> node)
+        {
+            Status status;
+            PushVisitingNode(index, node);
+            status = node.Execute(this);
+            if (status != Status.Running)
+            {
+                PopVisitingNode();
+            }
+
+            if (status == Status.Ok)
+            {
+                status = node.Complete(this);
+            }
+            if (status == Status.Fail)
+            {
+                node.Abort(this);
+            }
+            return status;
         }
 
         //internal int GetCurrentRunningNodeIndex()

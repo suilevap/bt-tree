@@ -24,9 +24,7 @@ namespace BT
                 if (node == null)
                     throw new NullReferenceException("BTNode child can not be null");
 
-                context.PushVisitingNode(i, node);
-                status = node.Start(context);
-                context.PopVisitingNode();
+                status = context.ExecuteNode(startIndex, node);
 
                 if (status == Status.Fail || status == Status.Running)
                 {
@@ -35,6 +33,8 @@ namespace BT
             }
             return status;
         }
+
+
 
 
         internal override Status Start(Context<T> context)
@@ -49,18 +49,7 @@ namespace BT
             if (context.TryGetCurrentRunningChildIndex(ref startIndex))
             {
                 CompositeNode<T> node = Childs[startIndex];
-                context.PushVisitingNode(startIndex, node);
-                status = node.Execute(context);
-                context.PopVisitingNode();
-
-                if (status == Status.Ok)
-                {
-                    status = node.Complete(context);
-                }
-                if (status == Status.Fail)
-                {
-                    node.Abort(context);
-                }
+                context.StartNode(startIndex, node);
             }
             else
             {

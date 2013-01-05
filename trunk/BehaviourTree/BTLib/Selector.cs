@@ -24,25 +24,14 @@ namespace BT
                 if (node == null)
                     throw new NullReferenceException("BTNode child can not be null");
 
-                context.PushVisitingNode(i, node);
                 if (i != runningNodeIndex)
                 {
-                    status = node.Start(context);
+                    status = context.StartNode(i, node);
                 }
                 else
                 {
-                    status = node.Execute(context);
-
-                    if (status == Status.Ok)
-                    {
-                        status = node.Complete(context);
-                    }
-                    if (status == Status.Fail)
-                    {
-                        node.Abort(context);
-                    }
+                    status = context.ExecuteNode(i, node);
                 }
-                context.PopVisitingNode();
 
                 if (status == Status.Ok || status == Status.Running)
                 {

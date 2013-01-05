@@ -13,6 +13,18 @@ namespace BT
         private readonly Action<T> _actionAbort;
 
 
+        internal SimpleAction(Func<T, Status> actionStart)
+            : this(actionStart, null, null, null)
+        {}
+
+        internal SimpleAction(Func<T, Status> actionStart, Func<T, Status> actionExecute)
+            : this(actionStart, actionExecute, null, null)
+        {}
+
+        internal SimpleAction(Func<T, Status> actionStart, Func<T, Status> actionExecute, Func<T, Status> actionComplete)
+            : this(actionStart, actionExecute, actionComplete, null)
+        {}
+
         internal SimpleAction(Func<T, Status> actionStart, Func<T, Status> actionExecute, Func<T, Status> actionComplete, Action<T> actionAbort)
         {
             _actionStart = actionStart;
