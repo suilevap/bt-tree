@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Action.cs" />
+    <Compile Include="SimpleAction.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="CompositeNode.cs" />
     <Compile Include="Path.cs" />

@@ -13,13 +13,10 @@ namespace BT
 
         }
 
-        internal override Status Execute(Context<T> context)
+
+        private Status Run(Context<T> context, int startIndex)
         {
-
             Status status = Status.Fail;
-
-            int startIndex = 0;
-            context.TryGetCurrentRunningChildIndex(ref startIndex);
 
             for (int i = startIndex; i < Childs.Length; i++)
             {
@@ -28,7 +25,7 @@ namespace BT
                     throw new NullReferenceException("BTNode child can not be null");
 
                 context.PushVisitingNode(i, node);
-                status = node.Execute(context);
+                status = node.Start(context);
                 context.PopVisitingNode();
 
                 if (status == Status.Fail || status == Status.Running)
@@ -38,5 +35,44 @@ namespace BT
             }
             return status;
         }
+
+
+        internal override Status Start(Context<T> context)
+        {
+            return Run(context, 0);
+
+        }
+        internal override Status Execute(Context<T> context)
+        {
+            Status status = Status.Fail;
+            int startIndex = 0;
+            if (context.TryGetCurrentRunningChildIndex(ref startIndex))
+            {
+                CompositeNode<T> node = Childs[startIndex];
+                context.PushVisitingNode(startIndex, node);
+                status = node.Execute(context);
+                context.PopVisitingNode();
+
+                if (status == Status.Ok)
+                {
+                    status = node.Complete(context);
+                }
+                if (status == Status.Fail)
+                {
+                    node.Abort(context);
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("Call Execute for not running node");
+            }
+
+            if (status == Status.Ok)
+            {
+                status = Run(context, startIndex + 1);
+            }
+            return status;
+        }
+
     }
 }
