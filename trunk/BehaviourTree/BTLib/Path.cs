@@ -43,16 +43,22 @@ namespace BT
             _runningNodesIndex.Clear();
         }
 
-        public override string ToString()
-        {
-            return _runningNodes.ToString();
-        }
-
-
         internal void RemoveLast()
         {
-            _runningNodes.RemoveAt(Count-1);
-            _runningNodesIndex.RemoveAt(Count - 1);
+            int lastIndex = Count - 1;
+            _runningNodes.RemoveAt(lastIndex);
+            _runningNodesIndex.RemoveAt(lastIndex);
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (Node<T> node in _runningNodes)
+            {
+                sb.AppendFormat("/{0}", node.ToString());
+            }
+            return sb.ToString();
+        }
+
     }
 }

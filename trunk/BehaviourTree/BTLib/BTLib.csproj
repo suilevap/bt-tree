@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Condition.cs" />
+    <Compile Include="BTBuilder.cs" />
     <Compile Include="SimpleAction.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="CompositeNode.cs" />

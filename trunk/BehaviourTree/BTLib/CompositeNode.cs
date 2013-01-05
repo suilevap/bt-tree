@@ -7,12 +7,11 @@ namespace BT
 {
     public abstract class CompositeNode<T> : Node<T>
     {
-        public CompositeNode<T>[] Childs { get; protected set; }
-        public string Name { get; protected set; }
+        public Node<T>[] Childs { get; protected set; }
 
-        protected CompositeNode(string name, params CompositeNode<T>[] childs)
+        protected CompositeNode(string name, params Node<T>[] childs)
+            :base(name)
         {
-            Name = name;
             Childs = childs;
         }
 
@@ -20,9 +19,9 @@ namespace BT
         public override string ToString()
         {
             StringBuilder sb =new StringBuilder();
-            sb.Append(Name);
+            sb.Append(base.ToString());
             sb.Append('(');
-            foreach(CompositeNode<T> node in Childs)
+            foreach(Node<T> node in Childs)
             {
                 sb.AppendFormat("{0},", node.ToString());
             }

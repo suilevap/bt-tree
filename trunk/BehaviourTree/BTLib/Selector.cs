@@ -7,7 +7,7 @@ namespace BT
 {
     public class Selector<T> : CompositeNode<T>
     {
-        internal Selector(string name, params CompositeNode<T>[] childs)
+        internal Selector(string name, params Node<T>[] childs)
             : base(name, childs)
         {
 
@@ -20,7 +20,7 @@ namespace BT
             Status status = Status.Fail;
             for (int i = 0; i < Childs.Length; i++)
             {
-                CompositeNode<T> node = Childs[i];
+                Node<T> node = Childs[i];
                 if (node == null)
                     throw new NullReferenceException("BTNode child can not be null");
 
@@ -30,7 +30,7 @@ namespace BT
                 }
                 else
                 {
-                    status = context.ExecuteNode(i, node);
+                    status = context.ExecuteRunningNode(i, node);
                 }
 
                 if (status == Status.Ok || status == Status.Running)

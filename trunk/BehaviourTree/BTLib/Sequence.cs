@@ -7,7 +7,7 @@ namespace BT
 {
     public class Sequence<T> : CompositeNode<T>
     {
-        internal Sequence(string name, params CompositeNode<T>[] childs)
+        internal Sequence(string name, params Node<T>[] childs)
             : base(name, childs)
         {
 
@@ -20,11 +20,12 @@ namespace BT
 
             for (int i = startIndex; i < Childs.Length; i++)
             {
-                CompositeNode<T> node = Childs[i];
+                Node<T> node = Childs[i];
                 if (node == null)
                     throw new NullReferenceException("BTNode child can not be null");
 
-                status = context.ExecuteNode(startIndex, node);
+                status = context.StartNode(startIndex, node);
+
 
                 if (status == Status.Fail || status == Status.Running)
                 {
@@ -35,21 +36,19 @@ namespace BT
         }
 
 
-
-
         internal override Status Start(Context<T> context)
         {
             return Run(context, 0);
-
         }
+
         internal override Status Execute(Context<T> context)
         {
             Status status = Status.Fail;
             int startIndex = 0;
             if (context.TryGetCurrentRunningChildIndex(ref startIndex))
             {
-                CompositeNode<T> node = Childs[startIndex];
-                context.StartNode(startIndex, node);
+                Node<T> node = Childs[startIndex];
+                status = context.ExecuteRunningNode(startIndex, node);
             }
             else
             {

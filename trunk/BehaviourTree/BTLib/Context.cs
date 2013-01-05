@@ -5,23 +5,18 @@ using System.Text;
 
 namespace BT
 {
-    internal class Context<T>
+    public class Context<T>
     {
         internal T ExecutionContext {get; private set;}
-        private CompositeNode<T> _root;
+        private readonly Node<T> _root;
 
         private Path<T> _currentPath;
         private Path<T> _lastRunningPath;
 
-        private Stack<bool> _isNodeRunning;
-        ///// <summary>
-        ///// True if _lastPath.StartsWith(_currentPath)
-        ///// </summary>
-        //internal bool IsCurrentPathRunning {get; private set;}
+        private readonly Stack<bool> _isNodeRunning;
 
 
-
-        internal Context(CompositeNode<T> root, T executionContext)
+        internal Context(Node<T> root, T executionContext)
         {
             ExecutionContext = executionContext;
             //IsCurrentPathRunning = false;
@@ -31,14 +26,38 @@ namespace BT
             _root = root;
         }
 
-        internal Status Run()
+        public Status Tick()
         {
-            Status status = _root.Execute(this);
+            Status status;
+            if (_lastRunningPath.Count != 0)
+            {
+                //continue
+                status = _root.Execute(this);
+            }
+            else
+            {
+                //start
+                status = _root.Start(this);
+            }
+
+            if (status == Status.Running)
+            {
+                //swap
+                var tmp = _lastRunningPath;
+                _lastRunningPath = _currentPath;
+                _currentPath = tmp;
+            }
+            else
+            {
+                _lastRunningPath.Clear();
+            }
+            _currentPath.Clear();
+            _isNodeRunning.Clear();
 
             return status;
         }
 
-        internal void PushVisitingNode(int nodeIndex, CompositeNode<T> node)
+        internal void PushVisitingNode(int nodeIndex, Node<T> node)
         {
             int runningIndex = -1;
             bool isCurrentPathRuning = TryGetCurrentRunningChildIndex(ref runningIndex);
@@ -55,7 +74,7 @@ namespace BT
         internal bool TryGetCurrentRunningChildIndex(ref int index)
         {
             bool result = false;
-            if (_isNodeRunning.Count != 0 && _isNodeRunning.Peek())
+            if ((_isNodeRunning.Count == 0 || _isNodeRunning.Peek()) && _lastRunningPath.Count > _currentPath.Count)
             {
                 index = _lastRunningPath.GetNodeIndex(_currentPath.Count);
                 result = true;
@@ -67,36 +86,37 @@ namespace BT
             return result;
         }
 
-        internal Status StartNode(int index, CompositeNode<T> node)
+        internal Status StartNode(int index, Node<T> node)
         {
             Status status;
             PushVisitingNode(index, node);
             status = node.Start(this);
+            if (status == Status.Running)
+            {
+                status = node.Tick(this);
+            }
             if (status != Status.Running)
             {
                 PopVisitingNode();
             }
             return status;
         }
-        internal Status ExecuteNode(int index, CompositeNode<T> node)
+        internal Status ExecuteRunningNode(int index, Node<T> node)
         {
             Status status;
             PushVisitingNode(index, node);
-            status = node.Execute(this);
+
+            status = node.Tick(this);
             if (status != Status.Running)
             {
                 PopVisitingNode();
             }
-
-            if (status == Status.Ok)
-            {
-                status = node.Complete(this);
-            }
-            if (status == Status.Fail)
-            {
-                node.Abort(this);
-            }
             return status;
+        }
+
+        public override string ToString()
+        {
+            return _lastRunningPath.ToString();
         }
 
         //internal int GetCurrentRunningNodeIndex()
