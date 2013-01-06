@@ -22,22 +22,35 @@ namespace BT
         }
 
 
-        internal abstract Status Start(Context<T> context);
-        internal abstract Status Execute(Context<T> context);
+        protected abstract Status Start(Context<T> context);
+        protected abstract Status Tick(Context<T> context);
 
-        internal virtual void Abort(Context<T> context)
+        protected virtual void Abort(Context<T> context)
         {
 
         }
-        internal virtual Status Complete(Context<T> context)
+        protected virtual Status Complete(Context<T> context)
         {
             return Status.Ok;
         }
 
-        internal Status Tick(Context<T> context )
+        internal Status Update(Context<T> context, bool isAlreadyRunning )
         {
-            Status status = Execute(context);
+            Status status;
 
+            if (!isAlreadyRunning)
+            {
+                status = Start(context);
+            }
+            else
+            {
+                status = Status.Running;
+            }
+
+            if (status == Status.Running)
+            {
+                status = Tick(context);
+            }
             if (status == Status.Ok)
             {
                 status = Complete(context);

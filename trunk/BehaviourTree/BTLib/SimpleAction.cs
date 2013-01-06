@@ -34,7 +34,7 @@ namespace BT
             _actionAbort = actionAbort;
         }
 
-        internal override Status Execute(Context<T> context)
+        protected override Status Tick(Context<T> context)
         {
             Status status = Status.Ok;
             if (_actionExecute != null)
@@ -44,7 +44,7 @@ namespace BT
             return status;
         }
 
-        internal override Status Start(Context<T> context)
+        protected override Status Start(Context<T> context)
         {
             Status status = Status.Ok;
             if (_actionStart != null)
@@ -54,7 +54,7 @@ namespace BT
             return status;
         }
 
-        internal override Status Complete(Context<T> context)
+        protected override Status Complete(Context<T> context)
         {
             Status status = Status.Ok;
             if (_actionComplete != null)
@@ -63,15 +63,14 @@ namespace BT
             }
             return status;
         }
-        
-        internal override void Abort(Context<T> context)
+
+        protected override void Abort(Context<T> context)
         {
             if (_actionAbort != null)
             {
                 _actionAbort(context.ExecutionContext);
             }
         }
-
 
     }
 }

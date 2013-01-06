@@ -26,19 +26,11 @@ namespace BT
             _root = root;
         }
 
-        public Status Tick()
+        public Status Update()
         {
             Status status;
-            if (_lastRunningPath.Count != 0)
-            {
-                //continue
-                status = _root.Execute(this);
-            }
-            else
-            {
-                //start
-                status = _root.Start(this);
-            }
+            bool isRunning = (_lastRunningPath.Count != 0);
+            status = UpdateNode(0, _root, isRunning);
 
             if (status == Status.Running)
             {
@@ -57,12 +49,9 @@ namespace BT
             return status;
         }
 
-        internal void PushVisitingNode(int nodeIndex, Node<T> node)
+        internal void PushVisitingNode(int nodeIndex, Node<T> node, bool isRunningNode)
         {
-            int runningIndex = -1;
-            bool isCurrentPathRuning = TryGetCurrentRunningChildIndex(ref runningIndex);
-            bool nodeRunning = isCurrentPathRuning && (nodeIndex == runningIndex);
-            _isNodeRunning.Push(nodeRunning);
+            _isNodeRunning.Push(isRunningNode);
             _currentPath.Add(nodeIndex, node);
         }
 
@@ -70,6 +59,15 @@ namespace BT
         {
             _isNodeRunning.Pop();
             _currentPath.RemoveLast();
+        }
+        internal int? GetCurrentRunningChildIndex()
+        {
+            int? result = null;
+            if ((_isNodeRunning.Count == 0 || _isNodeRunning.Peek()) && _lastRunningPath.Count > _currentPath.Count)
+            {
+                result = _lastRunningPath.GetNodeIndex(_currentPath.Count);
+            }
+            return result;
         }
         internal bool TryGetCurrentRunningChildIndex(ref int index)
         {
@@ -86,33 +84,18 @@ namespace BT
             return result;
         }
 
-        internal Status StartNode(int index, Node<T> node)
+        internal Status UpdateNode(int index, Node<T> node, bool isRunning)
         {
             Status status;
-            PushVisitingNode(index, node);
-            status = node.Start(this);
-            if (status == Status.Running)
-            {
-                status = node.Tick(this);
-            }
+            PushVisitingNode(index, node, isRunning);
+            status = node.Update(this, isRunning);
             if (status != Status.Running)
             {
                 PopVisitingNode();
             }
             return status;
         }
-        internal Status ExecuteRunningNode(int index, Node<T> node)
-        {
-            Status status;
-            PushVisitingNode(index, node);
 
-            status = node.Tick(this);
-            if (status != Status.Running)
-            {
-                PopVisitingNode();
-            }
-            return status;
-        }
 
         public override string ToString()
         {
