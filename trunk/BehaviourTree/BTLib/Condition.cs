@@ -15,7 +15,7 @@ namespace BT
             _condition = condition;
         }
 
-        protected override Status Start(Context<T> context)
+        protected override Status OnUpdate(Context<T> context, bool isAlreadyRunning)
         {
             bool check = _condition(context.ExecutionContext);
             Status status;
@@ -30,9 +30,5 @@ namespace BT
             return status;
         }
 
-        protected override Status Tick(Context<T> context)
-        {
-            throw new InvalidOperationException("Condition node can not be executed");
-        }
     }
 }

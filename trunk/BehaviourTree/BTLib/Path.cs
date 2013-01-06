@@ -55,7 +55,7 @@ namespace BT
             StringBuilder sb = new StringBuilder();
             foreach (Node<T> node in _runningNodes)
             {
-                sb.AppendFormat("/{0}", node.ToString());
+                sb.AppendFormat("/{0}", node.Name);
             }
             return sb.ToString();
         }

@@ -23,7 +23,7 @@ namespace BT
                     throw new NullReferenceException("BTNode child can not be null");
 
                 bool isRunning = (i != runningNodeIndex);
-                context.UpdateNode(i, node, isRunning);
+                status = node.Update(context, i, isRunning);
 
                 if (status == Status.Ok || status == Status.Running)
                 {

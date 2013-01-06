@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BT
 {
-    public class SimpleAction<T> : Node<T>
+    public class SimpleAction<T> : ActionNode<T>
     {
         private readonly Func<T, Status> _actionStart;
         private readonly Func<T, Status> _actionExecute;

@@ -30,7 +30,7 @@ namespace BT
         {
             Status status;
             bool isRunning = (_lastRunningPath.Count != 0);
-            status = UpdateNode(0, _root, isRunning);
+            status = _root.Update(this, 0, isRunning);
 
             if (status == Status.Running)
             {
@@ -83,19 +83,6 @@ namespace BT
             }
             return result;
         }
-
-        internal Status UpdateNode(int index, Node<T> node, bool isRunning)
-        {
-            Status status;
-            PushVisitingNode(index, node, isRunning);
-            status = node.Update(this, isRunning);
-            if (status != Status.Running)
-            {
-                PopVisitingNode();
-            }
-            return status;
-        }
-
 
         public override string ToString()
         {

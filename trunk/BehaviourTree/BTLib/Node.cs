@@ -21,43 +21,20 @@ namespace BT
             }
         }
 
+        protected abstract Status OnUpdate(Context<T> context, bool isAlreadyRunning);
 
-        protected abstract Status Start(Context<T> context);
-        protected abstract Status Tick(Context<T> context);
-
-        protected virtual void Abort(Context<T> context)
-        {
-
-        }
-        protected virtual Status Complete(Context<T> context)
-        {
-            return Status.Ok;
-        }
-
-        internal Status Update(Context<T> context, bool isAlreadyRunning )
+        internal Status Update(Context<T> context, int index, bool isAlreadyRunning )
         {
             Status status;
+            //store path to this node
+            context.PushVisitingNode(index, this, isAlreadyRunning);
 
-            if (!isAlreadyRunning)
-            {
-                status = Start(context);
-            }
-            else
-            {
-                status = Status.Running;
-            }
+            status = OnUpdate(context, isAlreadyRunning);
 
-            if (status == Status.Running)
+            if (status != Status.Running)
             {
-                status = Tick(context);
-            }
-            if (status == Status.Ok)
-            {
-                status = Complete(context);
-            }
-            if (status == Status.Fail)
-            {
-                Abort(context);
+                //clear running path
+                context.PopVisitingNode();
             }
             return status;
         }

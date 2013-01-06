@@ -17,20 +17,9 @@ namespace BT
 
         protected abstract Status UpdateChilds(Context<T> context, int? runningNodeIndex);
 
-        protected override Status Start(Context<T> context)
-        {
-            //Status status = UpdateChilds(context, null);
-            //return status;
-            return Status.Running;
-        }
-
-        protected override Status Tick(Context<T> context)
+        protected override Status OnUpdate(Context<T> context, bool isAlreadyRunning)
         {
             int? runningIndex = context.GetCurrentRunningChildIndex();
-            //bool runningNodeExsists = context.TryGetCurrentRunningChildIndex(ref runningIndex);
-            //if (!runningNodeExsists)
-            //    throw new InvalidOperationException("Call Execute for not running node");
-
             Status status = UpdateChilds(context, runningIndex);
             return status;
         }

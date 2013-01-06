@@ -20,7 +20,9 @@ namespace BT
             if (runningNodeIndex.HasValue)
             { 
                 int index = runningNodeIndex.Value;
-                status = context.UpdateNode(index, Childs[index], true);
+                Node<T> node = Childs[index];
+                status = node.Update(context, index, true);
+
                 startIndex = index + 1;
             }
             if (status == Status.Ok)
@@ -31,7 +33,7 @@ namespace BT
                     if (node == null)
                         throw new NullReferenceException("BTNode child can not be null");
                     
-                    status = context.UpdateNode(i, node, false);
+                    status = node.Update(context, i, false);
 
                     if (status == Status.Fail || status == Status.Running)
                     {
