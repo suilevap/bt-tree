@@ -11,21 +11,73 @@ namespace BehaviourTree
     {
         static void Main(string[] args)
         {
+            TestCondition();
+            TestAction();
             TestSequnce();
+            TestSelector();
         }
 
         class TestExecutionContext
         {
             public int[] SomeData = new int[10];
         }
+
+        static private void TestAction()
+        {
+            var bt = BT.BTBuilder<TestExecutionContext>.Instance;
+            TestExecutionContext testData = new TestExecutionContext();
+
+            var root = bt.Action("Test action",
+                x => x.SomeData[0] == 0,
+                x => x.SomeData[0]++ < 3,
+                x => x.SomeData[0] == 4);
+            var brain = bt.CreateContext(root, testData);
+            Status status = Status.Running;
+            int steps = 0;
+            while (status == Status.Running)
+            {
+                status = brain.Update();
+                Console.WriteLine(brain);
+                steps++;
+            }
+            Debug.Assert(steps == 4);
+            Debug.Assert(status == Status.Ok);
+        }
+
+        static private void TestCondition()
+        {
+            var bt = BT.BTBuilder<TestExecutionContext>.Instance;
+            TestExecutionContext testData = new TestExecutionContext();
+
+            var root = bt.Condition("Test condition", x => x.SomeData[0] == 1);
+            var context = bt.CreateContext(root, testData);
+            Status status = context.Update();
+            Debug.Assert(status == Status.Fail);
+            testData.SomeData[0] = 1;
+            status = context.Update();
+            Debug.Assert(status == Status.Ok);
+        }
+
         static private void TestSequnce()
         {
+            Func<TestExecutionContext, int, bool> testAction = (TestExecutionContext x, int i) =>
+                {
+                    if (x.SomeData[i] == 3)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        x.SomeData[i]++;
+                        return true;
+                    }
+                };
             var bt = BT.BTBuilder<TestExecutionContext>.Instance;
             var root =
                 bt.Sequence("Seq1",
-                    bt.Action("test SomeData[0]", x => true, x => TestAction(x, 0)),
-                    bt.Action("test SomeData[1]", x => true, x => TestAction(x, 1)),
-                    bt.Action("test SomeData[2]", x => true, x => TestAction(x, 2))
+                    bt.Action("test SomeData[0]", x => true, x => testAction(x, 0)),
+                    bt.Action("test SomeData[1]", x => true, x => testAction(x, 1)),
+                    bt.Action("test SomeData[2]", x => true, x => testAction(x, 2))
                 );
             Console.WriteLine(root);
 
@@ -46,17 +98,47 @@ namespace BehaviourTree
             Debug.Assert(testData.SomeData[2] == 3);
         }
 
-        private static bool TestAction(TestExecutionContext x, int i)
+
+        static private void TestSelector()
         {
-            if (x.SomeData[i] == 3)
-            {
-                return false;
-            }
-            else
-            {
-                x.SomeData[i]++;
-                return true;
-            }
+            var bt = BT.BTBuilder<TestExecutionContext>.Instance;
+            var root =
+                bt.Selector("Sel1",
+                    bt.Action("test SomeData[0]", x => x.SomeData[0] > 0, x => { x.SomeData[3] = 0; return false; }),
+                    bt.Action("test SomeData[1]", x => x.SomeData[1] > 0, x => { x.SomeData[3] = 1; return true; }),
+                    bt.Action("test SomeData[2]", x => x.SomeData[2] > 0, x => { x.SomeData[3] = 2; return true; })
+                );
+            Console.WriteLine(root);
+
+            TestExecutionContext testData = new TestExecutionContext();
+            var brain = bt.CreateContext(root, testData);
+            Status status;
+            Debug.Assert(testData.SomeData[3] == 0);
+            status = brain.Update();
+            Debug.Assert(testData.SomeData[3] == 0);
+            Debug.Assert(status == Status.Fail);
+
+            testData.SomeData[1] = 1;
+            status = brain.Update();
+            Debug.Assert(testData.SomeData[3] == 1);
+            Debug.Assert(status == Status.Running);
+
+            status = brain.Update();
+            Debug.Assert(testData.SomeData[3] == 1);
+            Debug.Assert(status == Status.Running);
+
+            testData.SomeData[2] = 1;
+            status = brain.Update();
+            Debug.Assert(testData.SomeData[3] == 1);
+            Debug.Assert(status == Status.Running);
+
+            testData.SomeData[0] = 1;
+            status = brain.Update();
+            Debug.Assert(testData.SomeData[3] == 0);
+            Debug.Assert(status == Status.Ok);
+
         }
+
+
     }
 }
