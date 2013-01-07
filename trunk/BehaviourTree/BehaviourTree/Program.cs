@@ -23,42 +23,9 @@ namespace BehaviourTree
             var bt = BT.BTBuilder<TestExecutionContext>.Instance;
             var root =
                 bt.Sequence("Seq1",
-                    bt.Action("test SomeData[0]", x => Status.Running, x =>
-                        {
-                            if (x.SomeData[0] == 3)
-                            {
-                                return Status.Ok;
-                            }
-                            else
-                            {
-                                x.SomeData[0]++;
-                                return Status.Running;
-                            }
-                        }),
-                    bt.Action("test SomeData[1]", x => Status.Running, x =>
-                        {
-                            if (x.SomeData[1] == 3)
-                            {
-                                return Status.Ok;
-                            }
-                            else
-                            {
-                                x.SomeData[1]++;
-                                return Status.Running;
-                            }
-                        }),
-                    bt.Action("test SomeData[2]", x => Status.Running, x =>
-                        {
-                            if (x.SomeData[2] == 3)
-                            {
-                                return Status.Ok;
-                            }
-                            else
-                            {
-                                x.SomeData[2]++;
-                                return Status.Running;
-                            }
-                        })
+                    bt.Action("test SomeData[0]", x => true, x => TestAction(x, 0)),
+                    bt.Action("test SomeData[1]", x => true, x => TestAction(x, 1)),
+                    bt.Action("test SomeData[2]", x => true, x => TestAction(x, 2))
                 );
             Console.WriteLine(root);
 
@@ -77,6 +44,19 @@ namespace BehaviourTree
             Debug.Assert(testData.SomeData[0] == 3);
             Debug.Assert(testData.SomeData[1] == 3);
             Debug.Assert(testData.SomeData[2] == 3);
+        }
+
+        private static bool TestAction(TestExecutionContext x, int i)
+        {
+            if (x.SomeData[i] == 3)
+            {
+                return false;
+            }
+            else
+            {
+                x.SomeData[i]++;
+                return true;
+            }
         }
     }
 }

@@ -7,46 +7,31 @@ namespace BT
 {
     public class SimpleAction<T> : ActionNode<T>
     {
-        private readonly Func<T, Status> _actionStart;
-        private readonly Func<T, Status> _actionExecute;
-        private readonly Func<T, Status> _actionComplete;
-        private readonly Action<T> _actionAbort;
+        private readonly Func<T, bool> _actionStart;
+        private readonly Func<T, bool> _actionExecute;
+        private readonly Func<T, bool> _actionComplete;
 
 
-        internal SimpleAction(string name, Func<T, Status> actionStart)
-            : this(name, actionStart, null, null, null)
+        internal SimpleAction(string name, Func<T, bool> actionStart)
+            : this(name, actionStart, null, null)
         {}
 
-        internal SimpleAction(string name, Func<T, Status> actionStart, Func<T, Status> actionExecute)
-            : this(name, actionStart, actionExecute, null, null)
+        internal SimpleAction(string name, Func<T, bool> actionStart, Func<T, bool> actionExecute)
+            : this(name, actionStart, actionExecute, null)
         {}
 
-        internal SimpleAction(string name, Func<T, Status> actionStart, Func<T, Status> actionExecute, Func<T, Status> actionComplete)
-            : this(name, actionStart, actionExecute, actionComplete, null)
-        {}
-
-        internal SimpleAction(string name, Func<T, Status> actionStart, Func<T, Status> actionExecute, Func<T, Status> actionComplete, Action<T> actionAbort)
+        internal SimpleAction(string name, Func<T, bool> actionStart, Func<T, bool> actionExecute, Func<T, bool> actionComplete)
             :base(name)
         {
             _actionStart = actionStart;
             _actionExecute = actionExecute;
             _actionComplete = actionComplete;
-            _actionAbort = actionAbort;
         }
 
-        protected override Status Tick(Context<T> context)
-        {
-            Status status = Status.Ok;
-            if (_actionExecute != null)
-            {
-                status = _actionExecute(context.ExecutionContext);
-            }
-            return status;
-        }
 
-        protected override Status Start(Context<T> context)
+        protected override bool Start(Context<T> context)
         {
-            Status status = Status.Ok;
+            bool status = false;//Fail by default
             if (_actionStart != null)
             {
                 status = _actionStart(context.ExecutionContext);
@@ -54,22 +39,24 @@ namespace BT
             return status;
         }
 
-        protected override Status Complete(Context<T> context)
+        protected override bool Tick(Context<T> context)
         {
-            Status status = Status.Ok;
+            bool status = true;//immediate complete by default
+            if (_actionExecute != null)
+            {
+                status = _actionExecute(context.ExecutionContext);
+            }
+            return status;
+        }
+
+        protected override bool Complete(Context<T> context)
+        {
+            bool status = true; //Success complete by default
             if (_actionComplete != null)
             {
                 status = _actionComplete(context.ExecutionContext);
             }
             return status;
-        }
-
-        protected override void Abort(Context<T> context)
-        {
-            if (_actionAbort != null)
-            {
-                _actionAbort(context.ExecutionContext);
-            }
         }
 
     }

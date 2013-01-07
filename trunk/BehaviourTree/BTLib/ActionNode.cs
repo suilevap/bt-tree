@@ -10,43 +10,42 @@ namespace BT
 
         protected ActionNode(string name)
             : base(name)
-        {}
+        { }
 
-        protected abstract Status Start(Context<T> context);
-        protected abstract Status Tick(Context<T> context);
+        protected abstract bool Start(Context<T> context);
+        protected abstract bool Tick(Context<T> context);
 
-        protected virtual void Abort(Context<T> context)
+        protected virtual bool Complete(Context<T> context)
         {
-
-        }
-        protected virtual Status Complete(Context<T> context)
-        {
-            return Status.Ok;
+            return true;
         }
 
-        protected override Status OnUpdate(Context<T> context, bool isAlreadyRunning)
+        protected override Status OnUpdate(Context<T> context, bool isRunning)
         {
             Status status;
-            if (!isAlreadyRunning)
+            if (!isRunning)
             {
-                status = Start(context);
+                isRunning = Start(context);
+            }
+
+
+            if (isRunning)
+            {
+                isRunning = Tick(context);
+
+                if (!isRunning)
+                {
+                    bool finalTest = Complete(context);
+                    status = finalTest ? Status.Ok : Status.Fail;
+                }
+                else
+                {
+                    status = Status.Running;
+                }
             }
             else
             {
-                status = Status.Running;
-            }
-
-            if (status == Status.Running)
-            {
-                status = Tick(context);
-            }
-            if (status == Status.Ok)
-            {
-                status = Complete(context);
-            }
-            if (status == Status.Fail)
-            {
-                Abort(context);
+                status = Status.Fail;
             }
             return status;
         }

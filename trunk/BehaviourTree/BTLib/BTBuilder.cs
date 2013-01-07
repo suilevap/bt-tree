@@ -33,26 +33,22 @@ namespace BT
             return node;
         }
 
-        public SimpleAction<T> Action(string name, Func<T, Status> startAction)
+        public SimpleAction<T> Action(string name, Func<T, bool> startAction)
         {
             SimpleAction<T> node = new SimpleAction<T>(name, startAction);
             return node;
         }
 
-        public SimpleAction<T> Action(string name, Func<T, Status> startAction, Func<T, Status> executionAction)
+        public SimpleAction<T> Action(string name, Func<T, bool> startAction, Func<T, bool> executionAction)
         {
             SimpleAction<T> node = new SimpleAction<T>(name, startAction, executionAction);
             return node;
         }
-        public SimpleAction<T> Action(string name, Func<T, Status> startAction, Func<T, Status> executionAction, Func<T, Status> completeAction)
+        public SimpleAction<T> Action(string name, Func<T, bool> startAction, Func<T, bool> executionAction, Func<T, bool> completeAction)
         {
             SimpleAction<T> node = new SimpleAction<T>(name, startAction, executionAction, completeAction);
             return node;
         }
-        public SimpleAction<T> Action(string name, Func<T, Status> startAction, Func<T, Status> executionAction, Func<T, Status> completeAction, Action<T> abortAction)
-        {
-            SimpleAction<T> node = new SimpleAction<T>(name, startAction, executionAction, completeAction, abortAction);
-            return node;
-        }
+ 
     }
 }
