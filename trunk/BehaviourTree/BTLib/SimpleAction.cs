@@ -29,32 +29,32 @@ namespace BT
         }
 
 
-        protected override bool Start(Context<T> context)
+        protected override bool Start(T executionContext)
         {
             bool status = false;//Fail by default
             if (_actionStart != null)
             {
-                status = _actionStart(context.ExecutionContext);
+                status = _actionStart(executionContext);
             }
             return status;
         }
 
-        protected override bool Tick(Context<T> context)
+        protected override bool Tick(T executionContext)
         {
             bool status = true;//immediate complete by default
             if (_actionExecute != null)
             {
-                status = _actionExecute(context.ExecutionContext);
+                status = _actionExecute(executionContext);
             }
             return status;
         }
 
-        protected override bool Complete(Context<T> context)
+        protected override bool Complete(T executionContext)
         {
             bool status = true; //Success complete by default
             if (_actionComplete != null)
             {
-                status = _actionComplete(context.ExecutionContext);
+                status = _actionComplete(executionContext);
             }
             return status;
         }

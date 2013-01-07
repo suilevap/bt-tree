@@ -12,10 +12,10 @@ namespace BT
             : base(name)
         { }
 
-        protected abstract bool Start(Context<T> context);
-        protected abstract bool Tick(Context<T> context);
+        protected abstract bool Start(T executionContext);
+        protected abstract bool Tick(T executionContext);
 
-        protected virtual bool Complete(Context<T> context)
+        protected virtual bool Complete(T executionContext)
         {
             return true;
         }
@@ -25,17 +25,17 @@ namespace BT
             Status status;
             if (!isRunning)
             {
-                isRunning = Start(context);
+                isRunning = Start(context.ExecutionContext);
             }
 
 
             if (isRunning)
             {
-                isRunning = Tick(context);
+                isRunning = Tick(context.ExecutionContext);
 
                 if (!isRunning)
                 {
-                    bool finalTest = Complete(context);
+                    bool finalTest = Complete(context.ExecutionContext);
                     status = finalTest ? Status.Ok : Status.Fail;
                 }
                 else
