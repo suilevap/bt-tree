@@ -5,27 +5,52 @@ using System.Text;
 
 namespace BT
 {
-    public class Context<T>
+    /// <summary>
+    /// Context for BT update, store curent BT state, previous BT state and reference to the blackboard
+    /// </summary>
+    /// <typeparam name="TBlackboard">Type of blackboard</typeparam>
+    public class Context<TBlackboard>
     {
-        internal T ExecutionContext {get; private set;}
-        private readonly Node<T> _root;
+        /// <summary>
+        /// Reference to the blackboard
+        /// </summary>
+        internal TBlackboard Blackboard { get; private set; }
 
-        private Path<T> _currentPath;
-        private Path<T> _lastRunningPath;
+        /// <summary>
+        /// BT root node
+        /// </summary>
+        private readonly Node<TBlackboard> _root;
 
+        /// <summary>
+        /// Curernt path, used for BT update
+        /// </summary>
+        private Path<TBlackboard> _currentPath;
+
+        /// <summary>
+        /// Previous path, store last running nodes
+        /// </summary>
+        private Path<TBlackboard> _lastRunningPath;
+
+        /// <summary>
+        /// Used in BT update to optimize check: is current node in a running state or not
+        /// </summary>
         private readonly Stack<bool> _isNodeRunning;
 
 
-        internal Context(Node<T> root, T executionContext)
+        internal Context(Node<TBlackboard> root, TBlackboard blackboard)
         {
-            ExecutionContext = executionContext;
+            Blackboard = blackboard;
             //IsCurrentPathRunning = false;
-            _currentPath = new Path<T>();
-            _lastRunningPath = new Path<T>();
+            _currentPath = new Path<TBlackboard>();
+            _lastRunningPath = new Path<TBlackboard>();
             _isNodeRunning = new Stack<bool>(16);
             _root = root;
         }
 
+        /// <summary>
+        /// Update BT
+        /// </summary>
+        /// <returns>result status</returns>
         public Status Update()
         {
             Status status;
@@ -34,6 +59,8 @@ namespace BT
 
             if (status == Status.Running)
             {
+                //save current BT state for next time
+
                 //swap
                 var tmp = _lastRunningPath;
                 _lastRunningPath = _currentPath;
@@ -49,37 +76,38 @@ namespace BT
             return status;
         }
 
-        internal void PushVisitingNode(int nodeIndex, Node<T> node, bool isRunningNode)
+        /// <summary>
+        /// Save currently visiting node
+        /// </summary>
+        /// <param name="nodeIndex">Index of visiting node (if parent is composite node)</param>
+        /// <param name="node">Visitng node</param>
+        /// <param name="isRunningNode">True if visiting node currently in running state</param>
+        internal void PushVisitingNode(int nodeIndex, Node<TBlackboard> node, bool isRunningNode)
         {
             _isNodeRunning.Push(isRunningNode);
             _currentPath.Add(nodeIndex, node);
         }
 
+        /// <summary>
+        /// Forget last visiting node
+        /// </summary>
         internal void PopVisitingNode()
         {
             _isNodeRunning.Pop();
             _currentPath.RemoveLast();
         }
+        /// <summary>
+        /// Return index of running node (if visiting node is composite node)
+        /// </summary>
+        /// <returns>Child index or null</returns>
         internal int? GetCurrentRunningChildIndex()
         {
             int? result = null;
+            //check if vising noe is running
             if ((_isNodeRunning.Count == 0 || _isNodeRunning.Peek()) && _lastRunningPath.Count > _currentPath.Count)
             {
+                //get index from pevious running nodes
                 result = _lastRunningPath.GetNodeIndex(_currentPath.Count);
-            }
-            return result;
-        }
-        internal bool TryGetCurrentRunningChildIndex(ref int index)
-        {
-            bool result = false;
-            if ((_isNodeRunning.Count == 0 || _isNodeRunning.Peek()) && _lastRunningPath.Count > _currentPath.Count)
-            {
-                index = _lastRunningPath.GetNodeIndex(_currentPath.Count);
-                result = true;
-            }
-            else
-            {
-                result = false;
             }
             return result;
         }
@@ -88,15 +116,5 @@ namespace BT
         {
             return _lastRunningPath.ToString();
         }
-
-        //internal int GetCurrentRunningNodeIndex()
-        //{
-        //    int currentRunningNodeIndex = -1;
-        //    if (_isNodeRunning.Count != 0 && _isNodeRunning.Peek())
-        //    {
-        //        currentRunningNodeIndex = _lastRunningPath.GetNodeIndex(_currentPath.Count);
-        //    }
-        //    return currentRunningNodeIndex;
-        //}
     }
 }

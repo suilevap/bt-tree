@@ -5,22 +5,26 @@ using System.Text;
 
 namespace BT
 {
-    public class BTBuilder<T>
+    /// <summary>
+    /// Helper class to build BT tree
+    /// </summary>
+    /// <typeparam name="TBlackboard">Type of Blackboard</typeparam>
+    public class BTBuilder<TBlackboard>
     {
         /// <summary>
         /// Get builder instance
         /// </summary>
-        public static BTBuilder<T> Instance = new BTBuilder<T>();
+        public static BTBuilder<TBlackboard> Instance = new BTBuilder<TBlackboard>();
 
         /// <summary>
         /// Create BT context, that should be used per agent
         /// </summary>
         /// <param name="root">BT root node</param>
-        /// <param name="executionContext">Action and condtion context</param>
+        /// <param name="blackboard">Reference to Blackboard</param>
         /// <returns>Context</returns>
-        public Context<T> CreateContext(Node<T> root, T executionContext)
+        public Context<TBlackboard> CreateContext(Node<TBlackboard> root, TBlackboard blackboard)
         {
-            Context<T> result = new Context<T>(root, executionContext);
+            Context<TBlackboard> result = new Context<TBlackboard>(root, blackboard);
             return result;
         }
         /// <summary>
@@ -29,9 +33,9 @@ namespace BT
         /// <param name="name">Node name</param>
         /// <param name="childs">Variants</param>
         /// <returns>Node</returns>
-        public Selector<T> Selector(string name, params Node<T>[] childs)
+        public Selector<TBlackboard> Selector(string name, params Node<TBlackboard>[] childs)
         {
-            Selector<T> node = new Selector<T>(name, childs);
+            Selector<TBlackboard> node = new Selector<TBlackboard>(name, childs);
             return node;
         }
 
@@ -41,9 +45,9 @@ namespace BT
         /// <param name="name">Node name</param>
         /// <param name="childs">Sequence</param>
         /// <returns>Node</returns>
-        public Sequence<T> Sequence(string name, params Node<T>[] childs)
+        public Sequence<TBlackboard> Sequence(string name, params Node<TBlackboard>[] childs)
         {
-            Sequence<T> node = new Sequence<T>(name, childs);
+            Sequence<TBlackboard> node = new Sequence<TBlackboard>(name, childs);
             return node;
         }
 
@@ -53,9 +57,9 @@ namespace BT
         /// <param name="name">Node name</param>
         /// <param name="condition">Functio that should return True in case of success</param>
         /// <returns>Node</returns>
-        public Condition<T> Condition(string name, Func<T, bool> condition)
+        public Condition<TBlackboard> Condition(string name, Func<TBlackboard, bool> condition)
         {
-            Condition<T> node = new Condition<T>(name, condition);
+            Condition<TBlackboard> node = new Condition<TBlackboard>(name, condition);
             return node;
         }
 
@@ -65,22 +69,9 @@ namespace BT
         /// <param name="name">Node ame</param>
         /// <param name="startAction">Run on node start, should return True if success and node moves to Status.Running state</param>
         /// <returns>Node</returns>
-        public SimpleAction<T> Action(string name, Func<T, bool> startAction)
+        public SimpleAction<TBlackboard> Action(string name, Func<TBlackboard, bool> startAction)
         {
-            SimpleAction<T> node = new SimpleAction<T>(name, startAction);
-            return node;
-        }
-
-        /// <summary>
-        /// Create simple action
-        /// </summary>
-        /// <param name="name">Node ame</param>
-        /// <param name="startAction">Run on node start, should return True if success and node moves to Status.Running state</param>
-        /// <param name="executionAction">Run every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
-        /// <returns>Node</returns>
-        public SimpleAction<T> Action(string name, Func<T, bool> startAction, Func<T, bool> executionAction)
-        {
-            SimpleAction<T> node = new SimpleAction<T>(name, startAction, executionAction);
+            SimpleAction<TBlackboard> node = new SimpleAction<TBlackboard>(name, startAction);
             return node;
         }
 
@@ -90,11 +81,24 @@ namespace BT
         /// <param name="name">Node ame</param>
         /// <param name="startAction">Run on node start, should return True if success and node moves to Status.Running state</param>
         /// <param name="executionAction">Run every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
-        /// <param name="completeAction">Run on node complete. Should return True in case of Statu</param>
         /// <returns>Node</returns>
-        public SimpleAction<T> Action(string name, Func<T, bool> startAction, Func<T, bool> executionAction, Func<T, bool> completeAction)
+        public SimpleAction<TBlackboard> Action(string name, Func<TBlackboard, bool> startAction, Func<TBlackboard, bool> executionAction)
         {
-            SimpleAction<T> node = new SimpleAction<T>(name, startAction, executionAction, completeAction);
+            SimpleAction<TBlackboard> node = new SimpleAction<TBlackboard>(name, startAction, executionAction);
+            return node;
+        }
+
+        /// <summary>
+        /// Create simple action
+        /// </summary>
+        /// <param name="name">Node ame</param>
+        /// <param name="startAction">Run on node start, should return True if success and node moves to Status.Running state</param>
+        /// <param name="executionAction">Run every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
+        /// <param name="completeAction">Run on node complete. Should return True in case of Ok, false in case of Fail</param>
+        /// <returns>Node</returns>
+        public SimpleAction<TBlackboard> Action(string name, Func<TBlackboard, bool> startAction, Func<TBlackboard, bool> executionAction, Func<TBlackboard, bool> completeAction)
+        {
+            SimpleAction<TBlackboard> node = new SimpleAction<TBlackboard>(name, startAction, executionAction, completeAction);
             return node;
         }
  

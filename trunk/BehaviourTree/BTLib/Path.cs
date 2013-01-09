@@ -5,55 +5,59 @@ using System.Text;
 
 namespace BT
 {
-    public class Path<T>
+    /// <summary>
+    /// Class to store path throught tree
+    /// </summary>
+    /// <typeparam name="TBlackboard">Type of blackboard</typeparam>
+    internal class Path<TBlackboard>
     {
-        private List<Node<T>> _runningNodes;
-        private List<int> _runningNodesIndex;
+        private readonly List<Node<TBlackboard>> _nodes;
+        private readonly List<int> _nodesIndex;
 
 
-        public int Count { get { return _runningNodes.Count; } }
+        public int Count { get { return _nodes.Count; } }
 
-        public Node<T> this[int index]
+        internal Node<TBlackboard> this[int index]
         {
-            get { return _runningNodes[index]; }
-            set { _runningNodes[index] = value; }
+            get { return _nodes[index]; }
+            set { _nodes[index] = value; }
         }
 
-        public Path()
+        internal Path()
         {
-            _runningNodes = new List<Node<T>>(16);
-            _runningNodesIndex = new List<int>(16);
+            _nodes = new List<Node<TBlackboard>>(16);
+            _nodesIndex = new List<int>(16);
         }
 
 
-        public void Add(int nodeIndex, Node<T> node)
+        internal void Add(int nodeIndex, Node<TBlackboard> node)
         {
-            _runningNodes.Add(node);
-            _runningNodesIndex.Add(nodeIndex);
+            _nodes.Add(node);
+            _nodesIndex.Add(nodeIndex);
         }
 
-        public int GetNodeIndex(int pos)
+        internal int GetNodeIndex(int pos)
         {
-            return _runningNodesIndex[pos];
+            return _nodesIndex[pos];
         }
 
-        public void Clear()
+        internal void Clear()
         {
-            _runningNodes.Clear();
-            _runningNodesIndex.Clear();
+            _nodes.Clear();
+            _nodesIndex.Clear();
         }
 
         internal void RemoveLast()
         {
             int lastIndex = Count - 1;
-            _runningNodes.RemoveAt(lastIndex);
-            _runningNodesIndex.RemoveAt(lastIndex);
+            _nodes.RemoveAt(lastIndex);
+            _nodesIndex.RemoveAt(lastIndex);
         }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (Node<T> node in _runningNodes)
+            foreach (Node<TBlackboard> node in _nodes)
             {
                 sb.AppendFormat("/{0}", node.Name);
             }

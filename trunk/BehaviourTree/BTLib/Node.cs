@@ -5,8 +5,15 @@ using System.Text;
 
 namespace BT
 {
-    public abstract class Node<T>
+    /// <summary>
+    /// Base BT node
+    /// </summary>
+    /// <typeparam name="TBlackboard">Type of Blackboard</typeparam>
+    public abstract class Node<TBlackboard>
     {
+        /// <summary>
+        /// Node name
+        /// </summary>
         public string Name { get; private set; }
         
         internal Node(string name)
@@ -21,9 +28,16 @@ namespace BT
             }
         }
 
-        protected abstract Status OnUpdate(Context<T> context, bool isAlreadyRunning);
+        /// <summary>
+        /// Run on update this node
+        /// </summary>
+        /// <param name="context">Context for BT current update</param>
+        /// <param name="isAlreadyRunning">True if this node in running state</param>
+        /// <returns></returns>
+        protected abstract Status OnUpdate(Context<TBlackboard> context, bool isAlreadyRunning);
 
-        internal Status Update(Context<T> context, int index, bool isAlreadyRunning )
+
+        internal Status Update(Context<TBlackboard> context, int index, bool isAlreadyRunning )
         {
             Status status;
             //store path to this node
@@ -31,9 +45,9 @@ namespace BT
 
             status = OnUpdate(context, isAlreadyRunning);
 
+            //clear running path if do not need store tis path
             if (status != Status.Running)
             {
-                //clear running path
                 context.PopVisitingNode();
             }
             return status;

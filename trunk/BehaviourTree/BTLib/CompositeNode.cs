@@ -5,20 +5,31 @@ using System.Text;
 
 namespace BT
 {
-    public abstract class CompositeNode<T> : Node<T>
+    /// <summary>
+    /// Base class for Composite nodes, return status depend on child node  status and concrete implementation
+    /// </summary>
+    /// <typeparam name="TBlackboard">Type of blackboard</typeparam>
+    public abstract class CompositeNode<TBlackboard> : Node<TBlackboard>
     {
-        public Node<T>[] Childs { get; protected set; }
+        public Node<TBlackboard>[] Childs { get; protected set; }
 
-        protected CompositeNode(string name, params Node<T>[] childs)
+        protected CompositeNode(string name, params Node<TBlackboard>[] childs)
             :base(name)
         {
             Childs = childs;
         }
 
-        protected abstract Status UpdateChilds(Context<T> context, int? runningNodeIndex);
+        /// <summary>
+        /// Evaluate state of composite node based on their child nodes
+        /// </summary>
+        /// <param name="context">BT Context</param>
+        /// <param name="runningNodeIndex">Index of child node, which currantly in running state, null if node does not have such child node</param>
+        /// <returns></returns>
+        protected abstract Status UpdateChilds(Context<TBlackboard> context, int? runningNodeIndex);
 
-        protected override Status OnUpdate(Context<T> context, bool isAlreadyRunning)
+        protected override Status OnUpdate(Context<TBlackboard> context, bool isAlreadyRunning)
         {
+            //get index of child which in running state
             int? runningIndex = context.GetCurrentRunningChildIndex();
             Status status = UpdateChilds(context, runningIndex);
             return status;
@@ -29,9 +40,9 @@ namespace BT
             StringBuilder sb =new StringBuilder();
             sb.Append(base.ToString());
             sb.Append('(');
-            foreach(Node<T> node in Childs)
+            foreach(Node<TBlackboard> node in Childs)
             {
-                sb.AppendFormat("{0},", node.ToString());
+                sb.AppendFormat("{0},", node);
             }
             sb.Append(')');
             return sb.ToString();

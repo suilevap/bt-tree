@@ -5,19 +5,37 @@ using System.Text;
 
 namespace BT
 {
-    public class Condition<T> : Node<T>
+    /// <summary>
+    /// Condtion node, return Ok if condtion function is true, else Fail status
+    /// </summary>
+    /// <typeparam name="TBlackboard"></typeparam>
+    public class Condition<TBlackboard> : Node<TBlackboard>
     {
-        private readonly Func<T, bool> _condition;
+        private readonly Func<TBlackboard, bool> _condition;
 
-        internal Condition(string name, Func<T, bool> condition)
+        internal Condition(string name, Func<TBlackboard, bool> condition)
             :base(name)
         {
             _condition = condition;
         }
 
-        protected override Status OnUpdate(Context<T> context, bool isAlreadyRunning)
+        protected virtual bool CheckCondtion(TBlackboard blackboard)
         {
-            bool check = _condition(context.ExecutionContext);
+            bool result;
+            if (_condition != null)
+            {
+                result = _condition(blackboard);
+            }
+            else
+            {
+                result = false;
+            }
+            return result;
+        }
+
+        protected override Status OnUpdate(Context<TBlackboard> context, bool isAlreadyRunning)
+        {
+            bool check = CheckCondtion(context.Blackboard);
             Status status;
             if (check)
             {
