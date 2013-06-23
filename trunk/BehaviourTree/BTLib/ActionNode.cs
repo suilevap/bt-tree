@@ -24,12 +24,17 @@ namespace BT
         protected abstract bool Start(TBlackboard blackboard);
 
         /// <summary>
+        /// Check if action is complete
+        /// </summary>
+        /// <param name="blackboard">Balckboard object</param>
+        /// <returns>True if node is still in Status.Running state, False - node execution is complete</returns>
+        protected abstract bool IsInProgress(TBlackboard blackboard);
+
+        /// <summary>
         /// Run every tick, while node this node in Running State
         /// </summary>
-        /// <param name="blackboard">Blackboard object</param>
-        /// <param name="isFirstRun">True if Tick runs for this node first time</param>
-        /// <returns>True if node is still in Status.Running state, False - node execution is complete</returns>
-        protected abstract bool Tick(TBlackboard blackboard, bool isFirstRun);
+        /// <param name="blackboard">Blackboard object</param>        
+        protected abstract void Tick(TBlackboard blackboard);
 
         /// <summary>
         /// Run on node complete (immediately after Tick method returs False )
@@ -53,15 +58,17 @@ namespace BT
 
             if (isRunning)
             {
-                isRunning = Tick(context.Blackboard, isStarting);
+                isRunning = IsInProgress(context.Blackboard);//Tick(context.Blackboard);//, isStarting);
 
                 if (!isRunning)
                 {
                     bool finalTest = Complete(context.Blackboard);
+                    context.LastRunningNode = null;
                     status = finalTest ? Status.Ok : Status.Fail;
                 }
                 else
                 {
+                    context.LastRunningNode = this;
                     status = Status.Running;
                 }
             }
@@ -70,6 +77,22 @@ namespace BT
                 status = Status.Fail;
             }
             return status;
+        }
+
+        /// <summary>
+        /// Run action
+        /// </summary>
+        /// <param name="context">Context object</param>
+        /// <returns>False - action complete</returns>
+        public bool Run(Context<TBlackboard> context)
+        {
+            bool result = false;
+            if (IsInProgress(context.Blackboard))
+            {
+                Tick(context.Blackboard);
+                result = true;
+            }
+            return result;
         }
 
     }

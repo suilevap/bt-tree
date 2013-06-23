@@ -29,8 +29,9 @@ namespace BehaviourTree
 
             var root = bt.Action("Test action",
                 x => x.SomeData[0] == 0,
-                x => x.SomeData[0]++ < 3,
-                x => x.SomeData[0] == 4);
+                x=> x.SomeData[0]<3,
+                x => x.SomeData[0]++,
+                x => x.SomeData[0] == 3);
             var brain = bt.CreateContext(root, testData);
             Status status = Status.Running;
             int steps = 0;
@@ -75,9 +76,9 @@ namespace BehaviourTree
             var bt = BT.BTBuilder<TestExecutionContext>.Instance;
             var root =
                 bt.Sequence("Seq1",
-                    bt.Action("test SomeData[0]", x => true, x => testAction(x, 0)),
-                    bt.Action("test SomeData[1]", x => true, x => testAction(x, 1)),
-                    bt.Action("test SomeData[2]", x => true, x => testAction(x, 2))
+                    bt.Action("test SomeData[0]", x => true, x => testAction(x, 0), null),
+                    bt.Action("test SomeData[1]", x => true, x => testAction(x, 1), null),
+                    bt.Action("test SomeData[2]", x => true, x => testAction(x, 2), null)
                 );
             Console.WriteLine(root);
 
@@ -104,9 +105,9 @@ namespace BehaviourTree
             var bt = BT.BTBuilder<TestExecutionContext>.Instance;
             var root =
                 bt.Selector("Sel1",
-                    bt.Action("test SomeData[0]", x => x.SomeData[0] > 0, x => { x.SomeData[3] = 0; return false; }),
-                    bt.Action("test SomeData[1]", x => x.SomeData[1] > 0, x => { x.SomeData[3] = 1; return true; }),
-                    bt.Action("test SomeData[2]", x => x.SomeData[2] > 0, x => { x.SomeData[3] = 2; return true; })
+                    bt.Action("test SomeData[0]", x => x.SomeData[0] > 0, x=>false, x => x.SomeData[3] = 0),
+                    bt.Action("test SomeData[1]", x => x.SomeData[1] > 0, x => true, x => x.SomeData[3] = 1),
+                    bt.Action("test SomeData[2]", x => x.SomeData[2] > 0, x => true, x =>  x.SomeData[3] = 2)
                 );
             Console.WriteLine(root);
 

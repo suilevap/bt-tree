@@ -37,6 +37,11 @@ namespace BT
         private readonly Stack<bool> _isNodeRunning;
 
 
+        /// <summary>
+        /// Currently active action node
+        /// </summary>
+        public ActionNode<TBlackboard> LastRunningNode;
+
         internal Context(Node<TBlackboard> root, TBlackboard blackboard)
         {
             Blackboard = blackboard;
@@ -47,13 +52,52 @@ namespace BT
             _root = root;
         }
 
+        public Status Update()
+        {
+            return Update(true);
+        }
+
         /// <summary>
         /// Update BT
         /// </summary>
         /// <returns>result status</returns>
-        public Status Update()
+        public Status Update(bool forceUpdate)
+        {
+            Status status = Status.Fail;
+            bool needUpdate = forceUpdate;
+            if (LastRunningNode != null)
+            {
+                bool actionInProgres = Run();
+                if (actionInProgres)
+                {
+                    status = Status.Running;
+                }
+                else 
+                {
+                    needUpdate = true;
+                }
+            }
+            else
+            {
+                needUpdate = true;
+            }
+
+            if (needUpdate)
+            {
+                status = Think();
+            }
+
+            return status;
+        }
+
+        /// <summary>
+        /// Re evalate BT
+        /// </summary>
+        /// <returns>result status</returns>
+        public Status Think()
         {
             Status status;
+            LastRunningNode = null;
             bool isRunning = (_lastRunningPath.Count != 0);
             status = _root.Update(this, 0, isRunning);
 
@@ -74,6 +118,20 @@ namespace BT
             _isNodeRunning.Clear();
 
             return status;
+        }
+
+        /// <summary>
+        /// Run Active Action
+        /// </summary>
+        /// <returns></returns>
+        public bool Run()
+        {
+            bool result = false;
+            if (LastRunningNode != null)
+            {
+                result = LastRunningNode.Run(this);
+            }
+            return result;
         }
 
         /// <summary>

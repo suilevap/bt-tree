@@ -12,8 +12,9 @@ namespace BT
     public class SimpleAction<TBlackboard> : ActionNode<TBlackboard>
     {
         private readonly Func<TBlackboard, bool> _actionStart;
-        private readonly Func<TBlackboard, bool> _actionExecute;
+        private readonly Action<TBlackboard> _actionExecute;
         private readonly Func<TBlackboard, bool> _actionComplete;
+        private readonly Func<TBlackboard, bool> _checkInProgress;
 
 
         /// <summary>
@@ -22,7 +23,7 @@ namespace BT
         /// <param name="name">Node name</param>
         /// <param name="actionStart">Run on node start, should return True if success and node moves to Status.Running state</param>
         internal SimpleAction(string name, Func<TBlackboard, bool> actionStart)
-            : this(name, actionStart, null, null)
+            : this(name, actionStart, null, null, null)
         {}
 
         /// <summary>
@@ -30,9 +31,10 @@ namespace BT
         /// </summary>
         /// <param name="name">Node name</param>
         /// <param name="actionStart">Run on node start, should return True if success and node moves to Status.Running state</param>
-        /// <param name="actionExecute">Run every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
-        internal SimpleAction(string name, Func<TBlackboard, bool> actionStart, Func<TBlackboard, bool> actionExecute)
-            : this(name, actionStart, actionExecute, null)
+        /// <param name="checkInProgress">Check every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
+        /// <param name="actionExecute">Run every node tick</param>
+        internal SimpleAction(string name, Func<TBlackboard, bool> actionStart, Func<TBlackboard, bool> checkInProgress, Action<TBlackboard> actionExecute)
+            : this(name, actionStart, checkInProgress, actionExecute, null)
         {}
 
         /// <summary>
@@ -40,17 +42,18 @@ namespace BT
         /// </summary>
         /// <param name="name">Node name</param>
         /// <param name="actionStart">Run on node start, should return True if success and node moves to Status.Running state</param>
-        /// <param name="actionExecute">Run every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
+        /// <param name="checkInProgress">Check every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
+        /// <param name="actionExecute">Run every node tick</param>
         /// <param name="actionComplete">Run on node complete. Should return True in case of Ok, false in case of Fail</param>
-        internal SimpleAction(string name, Func<TBlackboard, bool> actionStart, Func<TBlackboard, bool> actionExecute, Func<TBlackboard, bool> actionComplete)
+        internal SimpleAction(string name, Func<TBlackboard, bool> actionStart, Func<TBlackboard, bool> checkInProgress, Action<TBlackboard> actionExecute, Func<TBlackboard, bool> actionComplete)
             :base(name)
         {
             _actionStart = actionStart;
             _actionExecute = actionExecute;
+            _checkInProgress = checkInProgress;
             _actionComplete = actionComplete;
         }
-
-
+        
         protected override bool Start(TBlackboard blackboard)
         {
             bool status = false;//Fail by default
@@ -61,14 +64,12 @@ namespace BT
             return status;
         }
 
-        protected override bool Tick(TBlackboard blackboard, bool isFirstRun)
+        protected override void Tick(TBlackboard blackboard)
         {
-            bool status = true;//immediate complete by default
             if (_actionExecute != null)
             {
-                status = _actionExecute(blackboard);
+                _actionExecute(blackboard);
             }
-            return status;
         }
 
         protected override bool Complete(TBlackboard blackboard)
@@ -77,6 +78,16 @@ namespace BT
             if (_actionComplete != null)
             {
                 status = _actionComplete(blackboard);
+            }
+            return status;
+        }
+        
+        protected override bool IsInProgress(TBlackboard blackboard)
+        {
+            bool status = false;//immediate complete by default
+            if (_checkInProgress != null)
+            {
+                status = _checkInProgress(blackboard);
             }
             return status;
         }

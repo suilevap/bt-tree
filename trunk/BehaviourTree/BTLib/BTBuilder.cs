@@ -79,12 +79,14 @@ namespace BT
         /// Create simple action
         /// </summary>
         /// <param name="name">Node ame</param>
-        /// <param name="startAction">Run on node start, should return True if success and node moves to Status.Running state</param>
-        /// <param name="executionAction">Run every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
+        /// <param name="actionStart">Run on node start, should return True if success and node moves to Status.Running state</param>
+        /// <param name="checkInProgress">Check every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
+        /// <param name="actionExecute">Run every node tick</param>
+        /// <param name="actionComplete">Run on node complete. Should return True in case of Ok, false in case of Fail</param>        
         /// <returns>Node</returns>
-        public SimpleAction<TBlackboard> Action(string name, Func<TBlackboard, bool> startAction, Func<TBlackboard, bool> executionAction)
+        public SimpleAction<TBlackboard> Action(string name, Func<TBlackboard, bool> actionStart, Func<TBlackboard, bool> checkInProgress, Action<TBlackboard> executionAction)
         {
-            SimpleAction<TBlackboard> node = new SimpleAction<TBlackboard>(name, startAction, executionAction);
+            SimpleAction<TBlackboard> node = new SimpleAction<TBlackboard>(name, actionStart, checkInProgress, executionAction);
             return node;
         }
 
@@ -96,9 +98,9 @@ namespace BT
         /// <param name="executionAction">Run every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
         /// <param name="completeAction">Run on node complete. Should return True in case of Ok, false in case of Fail</param>
         /// <returns>Node</returns>
-        public SimpleAction<TBlackboard> Action(string name, Func<TBlackboard, bool> startAction, Func<TBlackboard, bool> executionAction, Func<TBlackboard, bool> completeAction)
+        public SimpleAction<TBlackboard> Action(string name, Func<TBlackboard, bool> actionStart, Func<TBlackboard, bool> checkInProgress, Action<TBlackboard> executionAction, Func<TBlackboard, bool> completeAction)
         {
-            SimpleAction<TBlackboard> node = new SimpleAction<TBlackboard>(name, startAction, executionAction, completeAction);
+            SimpleAction<TBlackboard> node = new SimpleAction<TBlackboard>(name, actionStart, checkInProgress, executionAction, completeAction);
             return node;
         }
  
