@@ -92,7 +92,7 @@ namespace BehaviourTree
                 Console.WriteLine(brain);
                 steps++;
             }
-            Debug.Assert(steps == 10);
+            Debug.Assert(steps >= 5);
 
             Debug.Assert(testData.SomeData[0] == 3);
             Debug.Assert(testData.SomeData[1] == 3);
@@ -105,9 +105,9 @@ namespace BehaviourTree
             var bt = BT.BTBuilder<TestExecutionContext>.Instance;
             var root =
                 bt.Selector("Sel1",
-                    bt.Action("test SomeData[0]", x => x.SomeData[0] > 0, x=>false, x => x.SomeData[3] = 0),
-                    bt.Action("test SomeData[1]", x => x.SomeData[1] > 0, x => true, x => x.SomeData[3] = 1),
-                    bt.Action("test SomeData[2]", x => x.SomeData[2] > 0, x => true, x =>  x.SomeData[3] = 2)
+                    bt.Action("test SomeData[0]", x => x.SomeData[0] > 0, x=> false, null,  x => x.SomeData[3] = 0),
+                    bt.Action("test SomeData[1]", x => x.SomeData[1] > 0, x => false, null, x => x.SomeData[3] = 1),
+                    bt.Action("test SomeData[2]", x => x.SomeData[2] > 0, x => false, null, x => x.SomeData[3] = 2)
                 );
             Console.WriteLine(root);
 
@@ -121,17 +121,21 @@ namespace BehaviourTree
 
             testData.SomeData[1] = 1;
             status = brain.Update();
+            
             Debug.Assert(testData.SomeData[3] == 1);
-            Debug.Assert(status == Status.Running);
+            Debug.Assert(status == Status.Ok);
 
             status = brain.Update();
+            brain.Run();
             Debug.Assert(testData.SomeData[3] == 1);
-            Debug.Assert(status == Status.Running);
+            Debug.Assert(status == Status.Ok);
 
             testData.SomeData[2] = 1;
             status = brain.Update();
+
+
             Debug.Assert(testData.SomeData[3] == 1);
-            Debug.Assert(status == Status.Running);
+            Debug.Assert(status == Status.Ok);
 
             testData.SomeData[0] = 1;
             status = brain.Update();
