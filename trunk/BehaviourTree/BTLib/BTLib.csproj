@@ -38,6 +38,9 @@
     <Compile Include="ActionNode.cs" />
     <Compile Include="Condition.cs" />
     <Compile Include="BTBuilder.cs" />
+    <Compile Include="DecoratorCondition.cs" />
+    <Compile Include="IBlackboard.cs" />
+    <Compile Include="ParallelAllActionNode.cs" />
     <Compile Include="SimpleAction.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="CompositeNode.cs" />

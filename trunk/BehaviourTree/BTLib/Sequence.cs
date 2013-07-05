@@ -9,7 +9,7 @@ namespace BT
     /// Selector node run one child to finish after the other
     /// </summary>
     /// <typeparam name="TBlackboard"></typeparam>
-    public class Sequence<TBlackboard> : CompositeNode<TBlackboard>
+    public class Sequence<TBlackboard> : CompositeNode<TBlackboard> where TBlackboard : IBlackboard
     {
         internal Sequence(string name, params Node<TBlackboard>[] childs)
             : base(name, childs)

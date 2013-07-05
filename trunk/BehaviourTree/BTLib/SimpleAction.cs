@@ -9,7 +9,7 @@ namespace BT
     /// Simple implementaion of ActionNode
     /// </summary>
     /// <typeparam name="TBlackboard">Type of Blackboard</typeparam>
-    public class SimpleAction<TBlackboard> : ActionNode<TBlackboard>
+    public class SimpleAction<TBlackboard> : ActionNode<TBlackboard> where TBlackboard : IBlackboard
     {
         private readonly Func<TBlackboard, bool> _actionStart;
         private readonly Action<TBlackboard> _actionExecute;
@@ -53,8 +53,8 @@ namespace BT
             _checkInProgress = checkInProgress;
             _actionComplete = actionComplete;
         }
-        
-        protected override bool Start(TBlackboard blackboard)
+
+        protected internal override bool Start(TBlackboard blackboard)
         {
             bool status = false;//Fail by default
             if (_actionStart != null)
@@ -64,7 +64,7 @@ namespace BT
             return status;
         }
 
-        protected override void Tick(TBlackboard blackboard)
+        protected internal override void Tick(TBlackboard blackboard)
         {
             if (_actionExecute != null)
             {
@@ -72,7 +72,7 @@ namespace BT
             }
         }
 
-        protected override bool Complete(TBlackboard blackboard)
+        protected internal override bool Complete(TBlackboard blackboard)
         {
             bool status = true; //Success complete by default
             if (_actionComplete != null)
@@ -81,8 +81,8 @@ namespace BT
             }
             return status;
         }
-        
-        protected override bool IsInProgress(TBlackboard blackboard)
+
+        protected internal override bool IsInProgress(TBlackboard blackboard)
         {
             bool status = false;//immediate complete by default
             if (_checkInProgress != null)

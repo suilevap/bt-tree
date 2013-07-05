@@ -9,7 +9,7 @@ namespace BT
     /// Base BT node
     /// </summary>
     /// <typeparam name="TBlackboard">Type of Blackboard</typeparam>
-    public abstract class Node<TBlackboard>
+    public abstract class Node<TBlackboard> where TBlackboard : IBlackboard
     {
         /// <summary>
         /// Node name

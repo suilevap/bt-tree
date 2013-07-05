@@ -9,7 +9,7 @@ namespace BT
     /// Helper class to build BT tree
     /// </summary>
     /// <typeparam name="TBlackboard">Type of Blackboard</typeparam>
-    public class BTBuilder<TBlackboard>
+    public class BTBuilder<TBlackboard> where TBlackboard : IBlackboard
     {
         /// <summary>
         /// Get builder instance
@@ -122,6 +122,36 @@ namespace BT
                 });
             return node;
         }
+
+
+        /// <summary>
+        /// Create Parallel All node
+        /// </summary>
+        /// <param name="name">Node name</param>
+        /// <param name="childs">Variants</param>
+        /// <returns>Node</returns>
+        public ParallelAllActionNode<TBlackboard> All(string name, params ActionNode<TBlackboard>[] childs)
+        {
+            ParallelAllActionNode<TBlackboard> node = new ParallelAllActionNode<TBlackboard>(name, childs);
+            return node;
+        }
+
+        /// <summary>
+        /// Create While Node
+        /// </summary>
+        /// <param name="name">Name</param>
+        /// <param name="checkFunc">Run child node if function return Status.Running</param>
+        /// <param name="node">Child Node</param>
+        /// <returns>Node</returns>
+        public DecoratorCondtion<TBlackboard> While(string name, Action<TBlackboard> initFunc, Func<TBlackboard, Status> checkFunc, Node<TBlackboard> node)
+        {
+            return new DecoratorCondtion<TBlackboard>(name, initFunc, checkFunc, node);
+        }
+
+        /// <summary>
+        /// Infinite empty action
+        /// </summary>
+        public ActionNode<TBlackboard> Idle = new SimpleAction<TBlackboard>("Idle", x => true, x => true, x => { });
 
     }
 }

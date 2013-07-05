@@ -9,7 +9,7 @@ namespace BT
     /// Condtion node, return Ok if condtion function is true, else Fail status
     /// </summary>
     /// <typeparam name="TBlackboard"></typeparam>
-    public class Condition<TBlackboard> : Node<TBlackboard>
+    public class Condition<TBlackboard> : Node<TBlackboard> where TBlackboard : IBlackboard
     {
         private readonly Func<TBlackboard, bool> _condition;
 

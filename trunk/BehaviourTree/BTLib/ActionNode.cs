@@ -9,7 +9,7 @@ namespace BT
     /// Primitive aciton node
     /// </summary>
     /// <typeparam name="TBlackboard">Type of using Blackboard</typeparam>
-    public abstract class ActionNode<TBlackboard> : Node<TBlackboard>
+    public abstract class ActionNode<TBlackboard> : Node<TBlackboard> where TBlackboard : IBlackboard
     {
 
         protected ActionNode(string name)
@@ -21,27 +21,27 @@ namespace BT
         /// </summary>
         /// <param name="blackboard">Blackboard object</param>
         /// <returns>True if success and node moves to Status.Running state, False in case of Fail</returns>
-        protected abstract bool Start(TBlackboard blackboard);
+        protected internal abstract bool Start(TBlackboard blackboard);
 
         /// <summary>
         /// Check if action is complete
         /// </summary>
         /// <param name="blackboard">Balckboard object</param>
         /// <returns>True if node is still in Status.Running state, False - node execution is complete</returns>
-        protected abstract bool IsInProgress(TBlackboard blackboard);
+        protected internal abstract bool IsInProgress(TBlackboard blackboard);
 
         /// <summary>
         /// Run every tick, while node this node in Running State
         /// </summary>
         /// <param name="blackboard">Blackboard object</param>        
-        protected abstract void Tick(TBlackboard blackboard);
+        protected internal abstract void Tick(TBlackboard blackboard);
 
         /// <summary>
         /// Run on node complete (immediately after Tick method returs False )
         /// </summary>
         /// <param name="blackboard">Blackboard object</param>
         /// <returns>True in case of Ok status, false in case of Fail</returns>
-        protected virtual bool Complete(TBlackboard blackboard)
+        protected internal virtual bool Complete(TBlackboard blackboard)
         {
             return true;
         }

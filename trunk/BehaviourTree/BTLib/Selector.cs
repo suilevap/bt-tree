@@ -9,7 +9,7 @@ namespace BT
     /// Selector node picks first child node which returns Ok or Running status.
     /// </summary>
     /// <typeparam name="TBlackboard">Type of blackboard</typeparam>
-    public class Selector<TBlackboard> : CompositeNode<TBlackboard>
+    public class Selector<TBlackboard> : CompositeNode<TBlackboard> where TBlackboard : IBlackboard
     {
         internal Selector(string name, params Node<TBlackboard>[] childs)
             : base(name, childs)

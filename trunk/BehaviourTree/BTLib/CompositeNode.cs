@@ -9,7 +9,7 @@ namespace BT
     /// Base class for Composite nodes, return status depend on child node  status and concrete implementation
     /// </summary>
     /// <typeparam name="TBlackboard">Type of blackboard</typeparam>
-    public abstract class CompositeNode<TBlackboard> : Node<TBlackboard>
+    public abstract class CompositeNode<TBlackboard> : Node<TBlackboard> where TBlackboard : IBlackboard
     {
         public Node<TBlackboard>[] Childs { get; protected set; }
 

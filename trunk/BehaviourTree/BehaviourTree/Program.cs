@@ -17,9 +17,13 @@ namespace BehaviourTree
             TestSelector();
         }
 
-        class TestExecutionContext
+        class TestExecutionContext : IBlackboard
         {
             public int[] SomeData = new int[10];
+
+            public void Update(TimeSpan time)
+            {
+            }
         }
 
         static private void TestAction()
@@ -126,7 +130,7 @@ namespace BehaviourTree
             Debug.Assert(status == Status.Ok);
 
             status = brain.Update();
-            brain.Run();
+            brain.Update();
             Debug.Assert(testData.SomeData[3] == 1);
             Debug.Assert(status == Status.Ok);
 

@@ -9,7 +9,7 @@ namespace BT
     /// Class to store path throught tree
     /// </summary>
     /// <typeparam name="TBlackboard">Type of blackboard</typeparam>
-    internal class Path<TBlackboard>
+    internal class Path<TBlackboard> where TBlackboard : IBlackboard
     {
         private readonly List<Node<TBlackboard>> _nodes;
         private readonly List<int> _nodesIndex;
