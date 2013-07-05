@@ -26,7 +26,7 @@ namespace BT
             { 
                 int index = runningNodeIndex.Value;
                 Node<TBlackboard> node = Childs[index];
-                status = node.Update(context, index, true);
+                status = node.Visit(context, index, true);
 
                 startIndex = index + 1;
             }
@@ -39,7 +39,7 @@ namespace BT
                     if (node == null)
                         throw new NullReferenceException("BTNode child can not be null");
                     
-                    status = node.Update(context, i, false);
+                    status = node.Visit(context, i, false);
                     //stop if node Fails or in running state
                     if (status == Status.Fail || status == Status.Running)
                     {

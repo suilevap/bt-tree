@@ -29,29 +29,52 @@ namespace BT
         }
 
         /// <summary>
-        /// Run on update this node
+        /// Start node
         /// </summary>
         /// <param name="context">Context for BT current update</param>
-        /// <param name="isAlreadyRunning">True if this node in running state</param>
+        /// <returns>Status</returns>
+        protected abstract Status Start(Context<TBlackboard> context);
+
+        /// <summary>
+        /// Resume node (node in running state)
+        /// </summary>
+        /// <param name="context">Context for BT current update</param>
         /// <returns></returns>
-        protected abstract Status OnUpdate(Context<TBlackboard> context, bool isAlreadyRunning);
+        protected abstract Status Resume(Context<TBlackboard> context);
+
+        ///// <summary>
+        ///// Run on node visiting
+        ///// </summary>
+        ///// <param name="context">Context for visit</param>
+        ///// <param name="index">Index of visiting node</param>
+        ///// <param name="runnindIndex">Index of running child node</param>
+        ///// <param name="resume">True, if node is resumed, fasle- started</param>
+        ///// <returns></returns>
+        //protected abstract Status OnVisit(Context<TBlackboard> context, int index, int? runnindIndex, bool resume);
 
 
-        internal Status Update(Context<TBlackboard> context, int index, bool isAlreadyRunning )
-        {
-            Status status;
-            //store path to this node
-            context.PushVisitingNode(index, this, isAlreadyRunning);
+        //internal Status Visit(Context<TBlackboard> context, int index, bool resume )
+        //{
+            
+        //    Status status;
+        //    //store path to this node
+        //    context.PushVisitingNode(index, this);
 
-            status = OnUpdate(context, isAlreadyRunning);
+        //    int? runningChildIndex = null;
+        //    if (resume)
+        //    {
+        //        runningChildIndex = context.GetCurrentRunningChildIndex();
+        //    }
 
-            //clear running path if do not need store tis path
-            if (status != Status.Running)
-            {
-                context.PopVisitingNode();
-            }
-            return status;
-        }
+        //    status = OnVisit(context, index, runningChildIndex, resume);
+
+        //    //clear running path if do not need store tis path
+        //    if (status != Status.Running)
+        //    {
+        //        context.PopVisitingNode(index);
+        //    }
+        //    return status;
+        //}
 
         public override string ToString()
         {

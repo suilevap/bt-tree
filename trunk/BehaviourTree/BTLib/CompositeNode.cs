@@ -14,7 +14,7 @@ namespace BT
         public Node<TBlackboard>[] Childs { get; protected set; }
 
         protected CompositeNode(string name, params Node<TBlackboard>[] childs)
-            :base(name)
+            : base(name)
         {
             Childs = childs;
         }
@@ -25,27 +25,30 @@ namespace BT
         /// <param name="context">BT Context</param>
         /// <param name="runningNodeIndex">Index of child node, which currantly in running state, null if node does not have such child node</param>
         /// <returns></returns>
-        protected abstract Status UpdateChilds(Context<TBlackboard> context, int? runningNodeIndex);
+        protected abstract Status OnVisit(Context<TBlackboard> context, bool resume, int? runningNodeIndex);
 
-        protected override Status OnUpdate(Context<TBlackboard> context, bool isAlreadyRunning)
+        protected override Status Start(Context<TBlackboard> context)
         {
-            //get index of child which in running state
+            throw new NotImplementedException();
+        }
+
+        protected override Status Resume(Context<TBlackboard> context)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected abstract IEnumerable<int> 
+
+        private Status Visit(Context<TBlackboard> context, bool resume)
+        {
             int? runningIndex = context.GetCurrentRunningChildIndex();
-            Status status = UpdateChilds(context, runningIndex);
+            Status status = OnVisit(context, resume, runningIndex);
             return status;
         }
 
         public override string ToString()
         {
-            StringBuilder sb =new StringBuilder();
-            sb.Append(base.ToString());
-            sb.Append('(');
-            foreach(Node<TBlackboard> node in Childs)
-            {
-                sb.AppendFormat("{0},", node);
-            }
-            sb.Append(')');
-            return sb.ToString();
+            return string.Format("{0}({1})", base.ToString(), string.Join(",", Childs.ToString()));
         }
     }
 }

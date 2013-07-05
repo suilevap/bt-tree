@@ -48,14 +48,14 @@ namespace BT
         }
 
         /// <summary>
-        /// Update BT
+        /// Visit BT
         /// </summary>
         /// <returns>result status</returns>
         public Status Update()
         {
             Status status;
             bool isRunning = (_lastRunningPath.Count != 0);
-            status = _root.Update(this, 0, isRunning);
+            status = _root.Visit(this, 0, isRunning);
 
             if (status == Status.Running)
             {
@@ -81,19 +81,17 @@ namespace BT
         /// </summary>
         /// <param name="nodeIndex">Index of visiting node (if parent is composite node)</param>
         /// <param name="node">Visitng node</param>
-        /// <param name="isRunningNode">True if visiting node currently in running state</param>
-        internal void PushVisitingNode(int nodeIndex, Node<TBlackboard> node, bool isRunningNode)
+        internal void PushVisitingNode(int nodeIndex, Node<TBlackboard> node)
         {
-            _isNodeRunning.Push(isRunningNode);
             _currentPath.Add(nodeIndex, node);
+
         }
 
         /// <summary>
         /// Forget last visiting node
         /// </summary>
-        internal void PopVisitingNode()
+        internal void PopVisitingNode(int nodeIndex)
         {
-            _isNodeRunning.Pop();
             _currentPath.RemoveLast();
         }
         /// <summary>
@@ -104,7 +102,7 @@ namespace BT
         {
             int? result = null;
             //check if vising noe is running
-            if ((_isNodeRunning.Count == 0 || _isNodeRunning.Peek()) && _lastRunningPath.Count > _currentPath.Count)
+            if (_lastRunningPath.Count > _currentPath.Count)
             {
                 //get index from pevious running nodes
                 result = _lastRunningPath.GetNodeIndex(_currentPath.Count);

@@ -29,7 +29,7 @@ namespace BT
                 //check if this child is running in previous update
                 bool isRunning = (i == runningNodeIndex);
                 //update child
-                status = node.Update(context, i, isRunning);
+                status = node.Visit(context, i, isRunning);
                 //stop if Succeed
                 if (status == Status.Ok || status == Status.Running)
                 {
