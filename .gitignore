@@ -1,0 +1,6 @@
+/trunk/BehaviourTree/.vs/
+/trunk/BehaviourTree/BehaviourTree/bin/
+/trunk/BehaviourTree/BehaviourTree/obj/
+/trunk/BehaviourTree/BTLib/obj/
+/trunk/BehaviourTree/BTLib/bin/
+*.csproj.user

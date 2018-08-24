@@ -37,7 +37,7 @@ namespace BT
         protected internal abstract void Tick(TBlackboard blackboard);
 
         /// <summary>
-        /// Run on node complete (immediately after Tick method returs False )
+        /// Run on node complete (immediately after Run method returs False )
         /// </summary>
         /// <param name="blackboard">Blackboard object</param>
         /// <returns>True in case of Ok status, false in case of Fail</returns>
@@ -49,7 +49,6 @@ namespace BT
         protected override Status OnUpdate(Context<TBlackboard> context, bool isRunning)
         {
             Status status;
-            bool isStarting = !isRunning;
             if (!isRunning)
             {
                 //start node, if it is not started

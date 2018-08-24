@@ -39,7 +39,9 @@
     <Compile Include="Condition.cs" />
     <Compile Include="BTBuilder.cs" />
     <Compile Include="DecoratorCondition.cs" />
+    <Compile Include="DynamicNode.cs" />
     <Compile Include="IBlackboard.cs" />
+    <Compile Include="OptionalActionNode.cs" />
     <Compile Include="ParallelAllActionNode.cs" />
     <Compile Include="SimpleAction.cs" />
     <Compile Include="Context.cs" />

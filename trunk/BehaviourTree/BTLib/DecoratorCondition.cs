@@ -17,7 +17,7 @@ namespace BT
 
         private readonly Node<TBlackboard> _child;
 
-        internal DecoratorCondtion(string name, Action<TBlackboard> initFunc, Func<TBlackboard, Status> checkFunc, Node<TBlackboard> child)
+        public DecoratorCondtion(string name, Action<TBlackboard> initFunc, Func<TBlackboard, Status> checkFunc, Node<TBlackboard> child)
             : base(name)
         {
             _child = child;
@@ -30,7 +30,10 @@ namespace BT
             Status result;
             if (!isAlreadyRunning)
             {
-                _initFunc(context.Blackboard);
+                if (_initFunc != null)
+                {
+                    _initFunc(context.Blackboard);
+                }
             }
             result = _conditionFunc(context.Blackboard);
             if (result == Status.Running)
@@ -43,5 +46,28 @@ namespace BT
         }
 
 
+    }
+
+    public class RepeatUntilSuccessDecorator<TBlackboard> : Node<TBlackboard> where TBlackboard : IBlackboard
+    {
+        private readonly Node<TBlackboard> _child;
+
+        public RepeatUntilSuccessDecorator(Node<TBlackboard> child)
+            : base("RepeatUntilSuccess")
+        {
+            _child = child;
+        }
+
+        protected override Status OnUpdate(Context<TBlackboard> context, bool isAlreadyRunning)
+        {
+            Status result;
+            result = _child.Update(context, 0, isAlreadyRunning);
+            if (result == Status.Fail )//&& isAlreadyRunning)
+            {
+                result = _child.Update(context, 0, false);
+            }
+            return result;
+
+        }
     }
 }

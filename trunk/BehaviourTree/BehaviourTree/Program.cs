@@ -15,11 +15,20 @@ namespace BehaviourTree
             TestAction();
             TestSequnce();
             TestSelector();
+            Console.ReadKey();
         }
 
         class TestExecutionContext : IBlackboard
         {
             public int[] SomeData = new int[10];
+
+            public void Reset()
+            {
+            }
+
+            public void RunningActionChanged<T>(Node<T> runningNode, Path<T> path) where T : IBlackboard
+            {
+            }
 
             public void Update(TimeSpan time)
             {

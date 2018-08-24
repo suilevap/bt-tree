@@ -31,7 +31,11 @@ namespace BT
 
         protected internal override void Tick(TBlackboard blackboard)
         {
-            Array.ForEach(Childs, x => x.Tick(blackboard));
+            //Array.ForEach(Childs, x => x.Tick(blackboard));
+            foreach(var child in Childs)
+            {
+                child.Tick(blackboard);
+            }
         }
 
         protected internal override bool Complete(TBlackboard blackboard)

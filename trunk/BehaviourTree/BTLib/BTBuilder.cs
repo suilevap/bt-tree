@@ -33,9 +33,19 @@ namespace BT
         /// <param name="name">Node name</param>
         /// <param name="childs">Variants</param>
         /// <returns>Node</returns>
-        public Selector<TBlackboard> Selector(string name, params Node<TBlackboard>[] childs)
+        public Node<TBlackboard> Selector(string name, params Node<TBlackboard>[] childs)
         {
-            Selector<TBlackboard> node = new Selector<TBlackboard>(name, childs);
+            //Selector<TBlackboard> node = new Selector<TBlackboard>(name, childs);
+            Node<TBlackboard> node;
+            if (childs.Length > 1)
+            {
+                node = new Selector<TBlackboard>(name, childs);
+            }
+            else
+            {
+                node = childs[0];
+                //node.Name = string.Format("{0}-{1}",name, node.Name);
+            }
             return node;
         }
 
@@ -45,9 +55,19 @@ namespace BT
         /// <param name="name">Node name</param>
         /// <param name="childs">Sequence</param>
         /// <returns>Node</returns>
-        public Sequence<TBlackboard> Sequence(string name, params Node<TBlackboard>[] childs)
+        public Node<TBlackboard> Sequence(string name, params Node<TBlackboard>[] childs)
         {
-            Sequence<TBlackboard> node = new Sequence<TBlackboard>(name, childs);
+            
+            Node<TBlackboard> node;
+            if (childs.Length > 1)
+            {
+                node = new Sequence<TBlackboard>(name, childs);
+            }
+            else
+            {
+                node = childs[0];
+                //node.Name = string.Format("{0}-{1}",name, node.Name);
+            }
             return node;
         }
 
@@ -148,6 +168,41 @@ namespace BT
             return new DecoratorCondtion<TBlackboard>(name, initFunc, checkFunc, node);
         }
 
+        /// <summary>
+        /// Create node which repeat child until success of child node.
+        /// </summary>
+        /// <param name="node">Child node</param>
+        /// <returns>Node</returns>
+        public RepeatUntilSuccessDecorator<TBlackboard> UntilSuccess(Node<TBlackboard> node)
+        {
+            return new RepeatUntilSuccessDecorator<TBlackboard>(node);
+        }
+
+        /// <summary>
+        /// Create Optional action node
+        /// </summary>
+        /// <param name="child">Optional action</param>
+        /// <param name="startSuccessRequired">If False action will starts even if child.Start failed</param>
+        /// <returns>ActionNode</returns>
+        public ActionNode<TBlackboard> Optional(ActionNode<TBlackboard> child, bool startSuccessRequired)
+        {
+            ActionNode<TBlackboard> node = new OptionalActionNode<TBlackboard>(child, startSuccessRequired);
+            return node;
+        }
+
+        /// <summary>
+        /// Create Optional action node
+        /// </summary>
+        /// <param name="child">Optional action</param>
+        /// <returns>ActionNode</returns>
+        public ActionNode<TBlackboard> Optional(ActionNode<TBlackboard> child)
+        {
+            ActionNode<TBlackboard> node = new OptionalActionNode<TBlackboard>(child, false);
+            return node;
+        }
+
+
+        
         /// <summary>
         /// Infinite empty action
         /// </summary>

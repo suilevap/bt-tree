@@ -9,7 +9,7 @@ namespace BT
     /// Context for BT update, store curent BT state, previous BT state and reference to the blackboard
     /// </summary>
     /// <typeparam name="TBlackboard">Type of blackboard</typeparam>
-    public class Context<TBlackboard> where TBlackboard:IBlackboard
+    public class Context<TBlackboard> where TBlackboard : IBlackboard
     {
         /// <summary>
         /// Reference to the blackboard
@@ -57,6 +57,14 @@ namespace BT
             return Update(TimeSpan.FromSeconds(1.0f), true);
         }
 
+        public void Reset()
+        {
+            _currentPath.Clear();
+            _lastRunningPath.Clear();
+            _isNodeRunning.Clear();
+            LastRunningNode = null;
+            Blackboard.Reset();
+        }
         /// <summary>
         /// Update BT
         /// </summary>
@@ -72,7 +80,7 @@ namespace BT
                 {
                     status = Status.Running;
                 }
-                else 
+                else
                 {
                     needUpdate = true;
                 }
@@ -84,8 +92,14 @@ namespace BT
 
             if (needUpdate)
             {
+                var previousRunningNode = LastRunningNode;
                 Blackboard.Update(time);
                 status = Think();
+
+                if (LastRunningNode != previousRunningNode)
+                {
+                    Blackboard.RunningActionChanged(LastRunningNode, _lastRunningPath);
+                }
             }
 
             return status;
