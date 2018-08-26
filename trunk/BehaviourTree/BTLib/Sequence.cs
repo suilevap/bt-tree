@@ -31,7 +31,7 @@ namespace BT
                 int index = nodeContext.ChildNodeIndex;
                 Node<TBlackboard> node = Childs[index];
                 result.Status = node.Update(context);
-
+                result.ChidlNodeIndex = index;
                 startIndex = index + 1;
             }
             //if previous node was successful
