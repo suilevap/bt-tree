@@ -11,13 +11,13 @@ namespace BT
     /// <typeparam name="TBlackboard"></typeparam>
     public class DecoratorCondtion<TBlackboard> : Node<TBlackboard> where TBlackboard : IBlackboard
     {
-        private readonly Action<TBlackboard> _initFunc;
-        private readonly Func<TBlackboard, Status> _conditionFunc;
+        private readonly Action<TBlackboard, NodeContext<TBlackboard>> _initFunc;
+        private readonly Func<TBlackboard, NodeContext<TBlackboard>, Status> _conditionFunc;
 
 
         private readonly Node<TBlackboard> _child;
 
-        public DecoratorCondtion(string name, Action<TBlackboard> initFunc, Func<TBlackboard, Status> checkFunc, Node<TBlackboard> child)
+        public DecoratorCondtion(string name, Action<TBlackboard, NodeContext<TBlackboard>> initFunc, Func<TBlackboard, NodeContext<TBlackboard>, Status> checkFunc, Node<TBlackboard> child)
             : base(name)
         {
             _child = child;
@@ -25,20 +25,20 @@ namespace BT
             _conditionFunc = checkFunc;
         }
 
-        protected override Status OnUpdate(Context<TBlackboard> context, bool isAlreadyRunning)
+        protected override Status OnUpdate(Context<TBlackboard> context, NodeContext<TBlackboard> nodeContext)
         {
             Status result;
-            if (!isAlreadyRunning)
+            if (!nodeContext.IsRunning)
             {
                 if (_initFunc != null)
                 {
-                    _initFunc(context.Blackboard);
+                    _initFunc(context.Blackboard, nodeContext);
                 }
             }
-            result = _conditionFunc(context.Blackboard);
+            result = _conditionFunc(context.Blackboard, nodeContext);
             if (result == Status.Running)
             {
-                result = _child.Update(context, 0, isAlreadyRunning);
+                result = _child.Update(context);
             }
             
             return result;
@@ -58,13 +58,13 @@ namespace BT
             _child = child;
         }
 
-        protected override Status OnUpdate(Context<TBlackboard> context, bool isAlreadyRunning)
+        protected override Status OnUpdate(Context<TBlackboard> context, NodeContext<TBlackboard> nodeContext)
         {
             Status result;
-            result = _child.Update(context, 0, isAlreadyRunning);
+            result = _child.Update(context);
             if (result == Status.Fail )//&& isAlreadyRunning)
             {
-                result = _child.Update(context, 0, false);
+                result = _child.Update(context);
             }
             return result;
 

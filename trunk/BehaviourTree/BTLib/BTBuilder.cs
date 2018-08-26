@@ -89,7 +89,7 @@ namespace BT
         /// <param name="name">Node ame</param>
         /// <param name="startAction">Run on node start, should return True if success and node moves to Status.Running state</param>
         /// <returns>Node</returns>
-        public SimpleAction<TBlackboard> Action(string name, Func<TBlackboard, bool> startAction)
+        public SimpleAction<TBlackboard> Action(string name, Func<TBlackboard, NodeContext<TBlackboard>, bool> startAction)
         {
             SimpleAction<TBlackboard> node = new SimpleAction<TBlackboard>(name, startAction);
             return node;
@@ -104,7 +104,10 @@ namespace BT
         /// <param name="actionExecute">Run every node tick</param>
         /// <param name="actionComplete">Run on node complete. Should return True in case of Ok, false in case of Fail</param>        
         /// <returns>Node</returns>
-        public SimpleAction<TBlackboard> Action(string name, Func<TBlackboard, bool> actionStart, Func<TBlackboard, bool> checkInProgress, Action<TBlackboard> executionAction)
+        public SimpleAction<TBlackboard> Action(string name, 
+            Func<TBlackboard, NodeContext<TBlackboard>, bool> actionStart,
+            Func<TBlackboard, NodeContext<TBlackboard>, bool> checkInProgress,
+            Action<TBlackboard, NodeContext<TBlackboard>> executionAction)
         {
             SimpleAction<TBlackboard> node = new SimpleAction<TBlackboard>(name, actionStart, checkInProgress, executionAction);
             return node;
@@ -118,7 +121,11 @@ namespace BT
         /// <param name="executionAction">Run every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
         /// <param name="completeAction">Run on node complete. Should return True in case of Ok, false in case of Fail</param>
         /// <returns>Node</returns>
-        public SimpleAction<TBlackboard> Action(string name, Func<TBlackboard, bool> actionStart, Func<TBlackboard, bool> checkInProgress, Action<TBlackboard> executionAction, Func<TBlackboard, bool> completeAction)
+        public SimpleAction<TBlackboard> Action(string name,
+            Func<TBlackboard, NodeContext<TBlackboard>, bool> actionStart, 
+            Func<TBlackboard, NodeContext<TBlackboard>, bool> checkInProgress, 
+            Action<TBlackboard, NodeContext<TBlackboard>> executionAction, 
+            Func<TBlackboard, NodeContext<TBlackboard>, bool> completeAction)
         {
             SimpleAction<TBlackboard> node = new SimpleAction<TBlackboard>(name, actionStart, checkInProgress, executionAction, completeAction);
             return node;
@@ -132,12 +139,16 @@ namespace BT
         /// <param name="executionAction">Run every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
         /// <param name="completeAction">Run on node complete. </param>
         /// <returns>Node</returns>
-        public SimpleAction<TBlackboard> Action(string name, Func<TBlackboard, bool> actionStart, Func<TBlackboard, bool> checkInProgress, Action<TBlackboard> executionAction, Action<TBlackboard> completeAction)
+        public SimpleAction<TBlackboard> Action(string name, 
+            Func<TBlackboard, NodeContext<TBlackboard>, bool> actionStart,
+            Func<TBlackboard, NodeContext<TBlackboard>, bool> checkInProgress, 
+            Action<TBlackboard, NodeContext<TBlackboard>> executionAction, 
+            Action<TBlackboard, NodeContext<TBlackboard>> completeAction)
         {
             SimpleAction<TBlackboard> node = new SimpleAction<TBlackboard>(name, actionStart, checkInProgress, executionAction,
-                x =>
+                (x,c) =>
                 {
-                    completeAction(x);
+                    completeAction(x,c);
                     return true;
                 });
             return node;
@@ -163,7 +174,7 @@ namespace BT
         /// <param name="checkFunc">Run child node if function return Status.Running</param>
         /// <param name="node">Child Node</param>
         /// <returns>Node</returns>
-        public DecoratorCondtion<TBlackboard> While(string name, Action<TBlackboard> initFunc, Func<TBlackboard, Status> checkFunc, Node<TBlackboard> node)
+        public DecoratorCondtion<TBlackboard> While(string name, Action<TBlackboard, NodeContext<TBlackboard>> initFunc, Func<TBlackboard, NodeContext<TBlackboard>, Status> checkFunc, Node<TBlackboard> node)
         {
             return new DecoratorCondtion<TBlackboard>(name, initFunc, checkFunc, node);
         }
@@ -206,7 +217,7 @@ namespace BT
         /// <summary>
         /// Infinite empty action
         /// </summary>
-        public ActionNode<TBlackboard> Idle = new SimpleAction<TBlackboard>("Idle", x => true, x => true, x => { });
+        public ActionNode<TBlackboard> Idle = new SimpleAction<TBlackboard>("Idle", (x,c) => true, (x, c) => true, (x, c) => { });
 
     }
 }

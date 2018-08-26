@@ -17,9 +17,12 @@ namespace BT
 
         }
 
-        protected override Status UpdateChilds(Context<TBlackboard> context, int? runningNodeIndex)
+        protected override CompositeStatus UpdateChilds(Context<TBlackboard> context, NodeContext<TBlackboard> nodeContext)
         {
-            Status status = Status.Fail;
+            CompositeStatus result = new CompositeStatus()
+            {
+                Status = Status.Fail
+            };
             for (int i = 0; i < Childs.Length; i++)
             {
                 Node<TBlackboard> node = Childs[i];
@@ -27,16 +30,17 @@ namespace BT
                     throw new NullReferenceException("BTNode child can not be null");
                 
                 //check if this child is running in previous update
-                bool isRunning = (i == runningNodeIndex);
+                bool isRunning = nodeContext.IsRunning && (i == nodeContext.ChildNodeIndex);
                 //update child
-                status = node.Update(context, i, isRunning);
+                result.Status = node.Update(context);
                 //stop if Succeed
-                if (status == Status.Ok || status == Status.Running)
+                if (result.Status == Status.Ok || result.Status == Status.Running)
                 {
+                    result.ChidlNodeIndex = i;
                     break;
                 }
             }
-            return status;
+            return result;
         }
 
     }

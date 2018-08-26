@@ -4,3 +4,5 @@
 /trunk/BehaviourTree/BTLib/obj/
 /trunk/BehaviourTree/BTLib/bin/
 *.csproj.user
+/trunk/BehaviourTree/BTLibTests/bin/
+/trunk/BehaviourTree/BTLibTests/obj/

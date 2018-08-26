@@ -22,13 +22,13 @@ namespace BT
         protected abstract void OnComplete(TBlackboard blackboard, Status status);
 
 
-        protected override Status OnUpdate(Context<TBlackboard> context, bool isAlreadyRunning)
+        protected override Status OnUpdate(Context<TBlackboard> context, NodeContext<TBlackboard> nodeContext)
         {
             Status result;
             var node = GetCurrentNode(context.Blackboard);
             if (node != null)
             {
-                result = node.Update(context, 0, isAlreadyRunning);
+                result = node.Update(context);
             }
             else
             {

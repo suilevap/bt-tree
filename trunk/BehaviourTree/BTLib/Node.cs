@@ -32,18 +32,18 @@ namespace BT
         /// Run on update this node
         /// </summary>
         /// <param name="context">Context for BT current update</param>
-        /// <param name="isAlreadyRunning">True if this node in running state</param>
+        /// <param name="nodeContext">node context</param>
         /// <returns></returns>
-        protected abstract Status OnUpdate(Context<TBlackboard> context, bool isAlreadyRunning);
+        protected abstract Status OnUpdate(Context<TBlackboard> context, NodeContext<TBlackboard> nodeContext);
 
 
-        internal Status Update(Context<TBlackboard> context, int index, bool isAlreadyRunning )
+        internal Status Update(Context<TBlackboard> context)
         {
             Status status;
             //store path to this node
-            context.PushVisitingNode(index, this, isAlreadyRunning);
+            NodeContext<TBlackboard> nodeContext = context.PushVisitingNode(this);
 
-            status = OnUpdate(context, isAlreadyRunning);
+            status = OnUpdate(context, nodeContext);
 
             //clear running path if do not need store tis path
             if (status != Status.Running)

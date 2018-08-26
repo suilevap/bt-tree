@@ -21,11 +21,11 @@ namespace BT
             _startSuccessRequired = startSuccessRequired;
         }
 
-        protected internal override bool Start(TBlackboard blackboard)
+        protected internal override bool Start(TBlackboard blackboard, NodeContext<TBlackboard> nodeContext)
         {
             
             bool result;
-            bool startResult = _child.Start(blackboard);
+            bool startResult = _child.Start(blackboard, nodeContext);
 
             if (_startSuccessRequired)
             {
@@ -38,21 +38,21 @@ namespace BT
             return result;
         }
 
-        protected internal override bool IsInProgress(TBlackboard blackboard)
+        protected internal override bool IsInProgress(TBlackboard blackboard, NodeContext<TBlackboard> nodeContext)
         {
             return true;
         }
 
-        protected internal override bool Complete(TBlackboard blackboard)
+        protected internal override bool Complete(TBlackboard blackboard, NodeContext<TBlackboard> nodeContext)
         {
             return true;
         }
 
-        protected internal override void Tick(TBlackboard blackboard)
+        protected internal override void Tick(TBlackboard blackboard, NodeContext<TBlackboard> nodeContext)
         {
-            if (_child.IsInProgress(blackboard))
+            if (_child.IsInProgress(blackboard, nodeContext))
             {
-                _child.Tick(blackboard);
+                _child.Tick(blackboard, nodeContext);
             }
         }
     }

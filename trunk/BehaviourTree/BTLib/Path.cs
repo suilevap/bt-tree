@@ -11,55 +11,74 @@ namespace BT
     /// <typeparam name="TBlackboard">Type of blackboard</typeparam>
     public class Path<TBlackboard> where TBlackboard : IBlackboard
     {
-        private readonly List<Node<TBlackboard>> _nodes;
-        private readonly List<int> _nodesIndex;
+
+        private readonly List<NodeContext<TBlackboard>> _nodesContext;
 
 
-        public int Count { get { return _nodes.Count; } }
+        public int Count { get { return _nodesContext.Count; } }
 
-        internal Node<TBlackboard> this[int index]
+        internal NodeContext<TBlackboard> this[int index]
         {
-            get { return _nodes[index]; }
-            set { _nodes[index] = value; }
+            get { return _nodesContext[index]; }
+            set { _nodesContext[index] = value; }
         }
 
         internal Path()
         {
-            _nodes = new List<Node<TBlackboard>>(16);
-            _nodesIndex = new List<int>(16);
+            _nodesContext = new List<NodeContext<TBlackboard>>(16);
         }
 
 
-        internal void Add(int nodeIndex, Node<TBlackboard> node)
+        private void Add(NodeContext<TBlackboard> nodeContext)
         {
-            _nodes.Add(node);
-            _nodesIndex.Add(nodeIndex);
+            _nodesContext.Add(nodeContext);
         }
 
-        internal int GetNodeIndex(int pos)
+        internal NodeContext<TBlackboard> Push(Node<TBlackboard> node, Path<TBlackboard> runningPath)
         {
-            return _nodesIndex[pos];
+            NodeContext<TBlackboard> result;
+            int currentLevel = Count;
+            bool prevRunning = currentLevel == 0 || _nodesContext[currentLevel - 1].IsRunning;
+            //if previous node is last running path
+            if (prevRunning && currentLevel < runningPath.Count )
+            {
+                var candidate = runningPath[currentLevel];
+                if (candidate.Node == node)
+                {
+                    //if this node is on last running path
+                    result = candidate;
+                    result.IsRunning = true;
+                }
+                else
+                {
+                    result = new NodeContext<TBlackboard>(node);
+                }
+            }
+            else
+            {
+                result = new NodeContext<TBlackboard>(node);
+            }
+            Add(result);
+            return result;
         }
 
         internal void Clear()
         {
-            _nodes.Clear();
-            _nodesIndex.Clear();
+            _nodesContext.Clear();
         }
 
         internal void RemoveLast()
         {
             int lastIndex = Count - 1;
-            _nodes.RemoveAt(lastIndex);
-            _nodesIndex.RemoveAt(lastIndex);
+            _nodesContext.RemoveAt(lastIndex);
         }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (Node<TBlackboard> node in _nodes)
+            foreach (NodeContext<TBlackboard> node in _nodesContext)
             {
-                sb.AppendFormat("/{0}", node.Name);
+                sb.AppendFormat("/{0}", node.Node.Name);
             }
             return sb.ToString();
         }

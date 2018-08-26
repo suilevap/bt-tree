@@ -33,7 +33,7 @@ namespace BT
             return result;
         }
 
-        protected override Status OnUpdate(Context<TBlackboard> context, bool isAlreadyRunning)
+        protected override Status OnUpdate(Context<TBlackboard> context, NodeContext<TBlackboard> nodeContext)
         {
             bool check = CheckCondtion(context.Blackboard);
             Status status;

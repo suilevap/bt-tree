@@ -19,28 +19,28 @@ namespace BT
             Childs = childs;
         }
 
-        protected internal override bool Start(TBlackboard blackboard)
+        protected internal override bool Start(TBlackboard blackboard, NodeContext<TBlackboard> nodeContext)
         {
-            return Childs.All(x => x.Start(blackboard));
+            return Childs.All(x => x.Start(blackboard, nodeContext));
         }
 
-        protected internal override bool IsInProgress(TBlackboard blackboard)
+        protected internal override bool IsInProgress(TBlackboard blackboard, NodeContext<TBlackboard> nodeContext)
         {
-            return Childs.All(x => x.IsInProgress(blackboard));
+            return Childs.All(x => x.IsInProgress(blackboard, nodeContext));
         }
 
-        protected internal override void Tick(TBlackboard blackboard)
+        protected internal override void Tick(TBlackboard blackboard, NodeContext<TBlackboard> nodeContext)
         {
             //Array.ForEach(Childs, x => x.Tick(blackboard));
             foreach(var child in Childs)
             {
-                child.Tick(blackboard);
+                child.Tick(blackboard, nodeContext);
             }
         }
 
-        protected internal override bool Complete(TBlackboard blackboard)
+        protected internal override bool Complete(TBlackboard blackboard, NodeContext<TBlackboard> nodeContext)
         {
-            return Childs.All(x => x.Complete(blackboard));
+            return Childs.All(x => x.Complete(blackboard, nodeContext));
 
         }
     }

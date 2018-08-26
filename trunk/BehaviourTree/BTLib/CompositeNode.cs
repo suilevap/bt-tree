@@ -11,6 +11,12 @@ namespace BT
     /// <typeparam name="TBlackboard">Type of blackboard</typeparam>
     public abstract class CompositeNode<TBlackboard> : Node<TBlackboard> where TBlackboard : IBlackboard
     {
+        public struct CompositeStatus
+        {
+            public Status Status;
+            public int ChidlNodeIndex;
+        }
+
         public Node<TBlackboard>[] Childs { get; protected set; }
 
         protected CompositeNode(string name, params Node<TBlackboard>[] childs)
@@ -25,14 +31,16 @@ namespace BT
         /// <param name="context">BT Context</param>
         /// <param name="runningNodeIndex">Index of child node, which currantly in running state, null if node does not have such child node</param>
         /// <returns></returns>
-        protected abstract Status UpdateChilds(Context<TBlackboard> context, int? runningNodeIndex);
+        protected abstract CompositeStatus UpdateChilds(Context<TBlackboard> context, NodeContext<TBlackboard> nodeContext);
 
-        protected override Status OnUpdate(Context<TBlackboard> context, bool isAlreadyRunning)
+        protected override Status OnUpdate(Context<TBlackboard> context, NodeContext<TBlackboard> nodeContext)
         {
-            //get index of child which in running state
-            int? runningIndex = context.GetCurrentRunningChildIndex();
-            Status status = UpdateChilds(context, runningIndex);
-            return status;
+            CompositeStatus status = UpdateChilds(context, nodeContext);
+            if (status.Status == Status.Running)
+            {
+                nodeContext.ChildNodeIndex = status.ChidlNodeIndex;
+            }
+            return status.Status;
         }
 
         public override string ToString()
