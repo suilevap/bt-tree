@@ -39,7 +39,7 @@ namespace BT
         public Context(Node<TBlackboard> root, TBlackboard blackboard,
             INodeContextCreator<TBlackboard> nodeContextCreator = null)
         {
-            nodeContextCreator = nodeContextCreator ?? PoolNodeContext<TBlackboard>.Instance;
+            nodeContextCreator = nodeContextCreator ?? SimpleNodeContextCreator<TBlackboard>.Instance;
             Blackboard = blackboard;
             //IsCurrentPathRunning = false;
             _currentPath = new Path<TBlackboard>(nodeContextCreator);

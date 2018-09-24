@@ -11,8 +11,10 @@ namespace BT
         void Release(NodeContext<T> nodeContext);
     }
 
-    internal class SimpleNodeContextCreator<T> : INodeContextCreator<T> where T : IBlackboard
+    public class SimpleNodeContextCreator<T> : INodeContextCreator<T> where T : IBlackboard
     {
+        public static INodeContextCreator<T> Instance = new SimpleNodeContextCreator<T>();
+
         public NodeContext<T> Get(Node<T> node)
         {
             var result = new NodeContext<T>();
@@ -26,7 +28,7 @@ namespace BT
         }
     }
 
-    internal class PoolNodeContext<T> : INodeContextCreator<T> where T : IBlackboard
+    public class PoolNodeContext<T> : INodeContextCreator<T> where T : IBlackboard
     {
         public static INodeContextCreator<T> Instance = new PoolNodeContext<T>();
 
