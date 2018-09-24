@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using BT;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -193,6 +194,33 @@ namespace BTLibTests
             Assert.AreEqual(0, testData.SomeData[3]);
             Assert.AreEqual(Status.Ok, status);
 
+        }
+
+        [TestMethod]
+        public void TextNodeContextCreation()
+        {
+            var bt = BT.BTBuilder<TestExecutionContext>.Instance;
+            Dictionary<NodeContext<TestExecutionContext>, bool> nodesContext = new Dictionary<NodeContext<TestExecutionContext>, bool>();
+
+            var node = bt.Sequence("seq",
+                bt.Action("1", (x, c) => { nodesContext[c] = true; return true; }),
+                bt.Action("2", (x, c) => { nodesContext[c] = true; return true; }),
+                bt.Action("3", (x, c) => { nodesContext[c] = true; return true; }),
+                bt.Action("4", (x, c) => { nodesContext[c] = true; return true; }),
+                bt.Action("5", (x, c) => { nodesContext[c] = true; return true; })
+                );
+            var root = bt.Sequence("seqRoot",
+                node,
+                node,
+                node);
+            TestExecutionContext testData = new TestExecutionContext();
+            var brain = bt.CreateContext(root, testData);
+            for (int i = 0; i < 100; i++)
+            {
+                brain.Update();
+            }
+
+            Assert.AreEqual(1, nodesContext.Count);
         }
     }
 }

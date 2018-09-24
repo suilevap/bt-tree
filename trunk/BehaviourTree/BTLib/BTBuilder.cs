@@ -21,10 +21,11 @@ namespace BT
         /// </summary>
         /// <param name="root">BT root node</param>
         /// <param name="blackboard">Reference to Blackboard</param>
+        /// <param name="nodeContextCreator">NodeContext pool</param>
         /// <returns>Context</returns>
-        public Context<TBlackboard> CreateContext(Node<TBlackboard> root, TBlackboard blackboard)
+        public Context<TBlackboard> CreateContext(Node<TBlackboard> root, TBlackboard blackboard, INodeContextCreator<TBlackboard> nodeContextCreator = null)
         {
-            Context<TBlackboard> result = new Context<TBlackboard>(root, blackboard);
+            Context<TBlackboard> result = new Context<TBlackboard>(root, blackboard, nodeContextCreator);
             return result;
         }
         /// <summary>

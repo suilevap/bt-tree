@@ -45,7 +45,7 @@ namespace BT
 
         public override string ToString()
         {
-            StringBuilder sb =new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.Append(base.ToString());
             sb.Append('(');
             foreach(Node<TBlackboard> node in Childs)

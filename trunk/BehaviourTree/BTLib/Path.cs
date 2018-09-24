@@ -13,7 +13,7 @@ namespace BT
     {
 
         private readonly List<NodeContext<TBlackboard>> _nodesContext;
-
+        private readonly INodeContextCreator<TBlackboard> _nodeContextCreator;
 
         public int Count { get { return _nodesContext.Count; } }
 
@@ -23,9 +23,10 @@ namespace BT
             set { _nodesContext[index] = value; }
         }
 
-        internal Path()
+        internal Path(INodeContextCreator<TBlackboard> nodeContextCreator)
         {
             _nodesContext = new List<NodeContext<TBlackboard>>(16);
+            _nodeContextCreator = nodeContextCreator;
         }
 
 
@@ -51,12 +52,12 @@ namespace BT
                 }
                 else
                 {
-                    result = new NodeContext<TBlackboard>(node);
+                    result = _nodeContextCreator.Get(node);
                 }
             }
             else
             {
-                result = new NodeContext<TBlackboard>(node);
+                result = _nodeContextCreator.Get(node);
             }
             Add(result);
             return result;
@@ -64,12 +65,17 @@ namespace BT
 
         internal void Clear()
         {
+            for (int i = 0; i < _nodesContext.Count; i++)
+            {
+                _nodeContextCreator.Release(_nodesContext[i]);
+            }
             _nodesContext.Clear();
         }
 
         internal void RemoveLast()
         {
             int lastIndex = Count - 1;
+            _nodeContextCreator.Release(_nodesContext[lastIndex]);
             _nodesContext.RemoveAt(lastIndex);
         }
 

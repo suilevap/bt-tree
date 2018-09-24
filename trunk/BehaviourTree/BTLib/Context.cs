@@ -36,12 +36,14 @@ namespace BT
         /// </summary>
         public ActionNode<TBlackboard> LastRunningNode;
 
-        public Context(Node<TBlackboard> root, TBlackboard blackboard)
+        public Context(Node<TBlackboard> root, TBlackboard blackboard,
+            INodeContextCreator<TBlackboard> nodeContextCreator = null)
         {
+            nodeContextCreator = nodeContextCreator ?? PoolNodeContext<TBlackboard>.Instance;
             Blackboard = blackboard;
             //IsCurrentPathRunning = false;
-            _currentPath = new Path<TBlackboard>();
-            _lastRunningPath = new Path<TBlackboard>();
+            _currentPath = new Path<TBlackboard>(nodeContextCreator);
+            _lastRunningPath = new Path<TBlackboard>(nodeContextCreator);
             _root = root;
         }
 
