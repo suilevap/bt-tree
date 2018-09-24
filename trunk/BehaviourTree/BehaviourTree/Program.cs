@@ -30,7 +30,7 @@ namespace BehaviourTree
             {
             }
 
-            public void Update(TimeSpan time)
+            public void UpdateBt(TimeSpan time)
             {
             }
         }

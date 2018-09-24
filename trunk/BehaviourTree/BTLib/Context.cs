@@ -87,7 +87,7 @@ namespace BT
             if (needUpdate)
             {
                 var previousRunningNode = LastRunningNode;
-                Blackboard.Update(time);
+                Blackboard.UpdateBt(time);
                 status = Think();
 
                 if (LastRunningNode != previousRunningNode)

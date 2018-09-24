@@ -20,7 +20,7 @@ namespace BTLibTests
             {
             }
 
-            public void Update(TimeSpan time)
+            public void UpdateBt(TimeSpan time)
             {
             }
         }
