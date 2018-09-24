@@ -297,7 +297,7 @@ float _previousBtUpdateInSec = 0;
 void UpdateBt(float gameTimeInSec)
 {
     bool needForceUpdate = (gameTimeInSec - _previousBtUpdateInSec) > BT_FORCE_UPDATE_IN_SEC;
-    if (nnedForceUpdate)
+    if (needForceUpdate)
     {
        _previousBtUpdateInSec = gameTimeInSec;
     }
