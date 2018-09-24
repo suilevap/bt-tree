@@ -146,12 +146,16 @@ Implement abstract class [ActionNode<TBlackboard>](https://github.com/suilevap/b
         }
 ```
 Example for action move:
+
 Start - returns true if path to target exsists, otherwise false
+
 IsInProgress - returns true, if agent position is not equal to target and user can move
+
 Tick - save command to move to target (using blackboard)
+
 Complete - returns true, if agent position is equal to target 
 
-For simple action can be use anonymous action which delegates all these function to lambda
+For simple actions you can use an anonymous action which delegates all these function to lambda
 
 ```C#
 bt.Action("Action1",
@@ -248,8 +252,11 @@ bt.RepeatUntilSuccessDecorator(node);
 ### Node context
 
 Every node recieve blackboard and node context as arguments during updates.
+
 Blackboard is used to get the state of world or agent.
+
 Node context can be used to store node specific state.
+
 For example, we can implement decorator method which will run child node for specific time only:
 
 ```C#
@@ -280,8 +287,8 @@ For example, we can implement decorator method which will run child node for spe
 ```
 
 ### Behaviour tree update
-For performance opimization reason you can restrict reevaluation tree on each update, using forceUpdate = false in method "Context.Update(TimeSpan time, bool forceUpdate)" 
-In this case tree will try to execute last running node, and reevaluate tree only if last running node is succeed or fail.
+For performance opimization reason you can restrict reevaluation tree on each update, using forceUpdate = false in method "Context.Update(TimeSpan time, bool forceUpdate)" In this case tree will try to execute last running node, and reevaluate tree only if last running node is succeed or fail.
+
 In general for realtime game something like this can be used:
 
 ```C#
