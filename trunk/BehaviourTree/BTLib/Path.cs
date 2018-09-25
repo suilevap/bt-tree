@@ -38,6 +38,8 @@ namespace BT
         internal NodeContext<TBlackboard> Push(Node<TBlackboard> node, Path<TBlackboard> runningPath)
         {
             NodeContext<TBlackboard> result;
+            result = _nodeContextCreator.Get(node);
+
             int currentLevel = Count;
             bool prevRunning = currentLevel == 0 || _nodesContext[currentLevel - 1].IsRunning;
             //if previous node is last running path
@@ -47,18 +49,11 @@ namespace BT
                 if (candidate.Node == node)
                 {
                     //if this node is on last running path
-                    result = candidate;
+                    result.CopyFrom(candidate);
                     result.IsRunning = true;
                 }
-                else
-                {
-                    result = _nodeContextCreator.Get(node);
-                }
             }
-            else
-            {
-                result = _nodeContextCreator.Get(node);
-            }
+   
             Add(result);
             return result;
         }

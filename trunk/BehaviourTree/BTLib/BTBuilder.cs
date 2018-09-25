@@ -102,7 +102,6 @@ namespace BT
         /// <param name="name">Node ame</param>
         /// <param name="actionStart">Run on node start, should return True if success and node moves to Status.Running state</param>
         /// <param name="checkInProgress">Check every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
-        /// <param name="actionExecute">Run every node tick</param>
         /// <param name="actionComplete">Run on node complete. Should return True in case of Ok, false in case of Fail</param>        
         /// <returns>Node</returns>
         public SimpleAction<TBlackboard> Action(string name, 
@@ -119,6 +118,7 @@ namespace BT
         /// </summary>
         /// <param name="name">Node ame</param>
         /// <param name="startAction">Run on node start, should return True if success and node moves to Status.Running state</param>
+        /// <param name="checkInProgress">Check every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
         /// <param name="executionAction">Run every node tick, should return True if node is still in Status.Running state, false - node execution is complete</param>
         /// <param name="completeAction">Run on node complete. Should return True in case of Ok, false in case of Fail</param>
         /// <returns>Node</returns>

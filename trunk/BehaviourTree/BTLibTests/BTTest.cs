@@ -197,6 +197,41 @@ namespace BTLibTests
         }
 
         [TestMethod]
+        public void TestSelectorContinue()
+        {
+            var bt = BT.BTBuilder<TestExecutionContext>.Instance;
+            TestExecutionContext testData = new TestExecutionContext();
+
+            var root =
+              bt.Selector("Sel1",
+                bt.Sequence("Nothing",
+                  bt.Action("Nothing", (x, c) => false, (x, c) => false, null, (x, c) => true)
+                ),
+
+                bt.Sequence("Seq",
+                  bt.Condition("test SomeData[0]", (x) => x.SomeData[0] == 0),
+                  bt.Action("Update SomeData[0]", (x, c) => { x.SomeData[0] = 1; return true; }),
+
+                  bt.Action("Update SomeData[1]", 
+                    (x, c) => x.SomeData[1] == 0,
+                    (x, c) => x.SomeData[1] < 5,
+                    (x, c) => x.SomeData[1]= x.SomeData[1] + 1)
+                ),
+                  bt.Action("Nothing", (x, c) => true, (x, c) => false, null, (x, c) => true)
+              );
+
+            var brain = bt.CreateContext(root, testData, PoolNodeContext<TestExecutionContext>.Instance);
+
+            for(int i = 0; i < 5; i++)
+            {
+                brain.Update();
+            }
+
+
+            Assert.AreEqual(5, testData.SomeData[1]);
+        }
+
+        [TestMethod]
         public void TextNodeContextCreation()
         {
             var bt = BT.BTBuilder<TestExecutionContext>.Instance;

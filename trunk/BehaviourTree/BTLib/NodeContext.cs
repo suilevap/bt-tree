@@ -34,5 +34,12 @@ namespace BT
             Data = data;
         }
 
+        public void CopyFrom(NodeContext<T> fromoNode)
+        {
+            ChildNodeIndex = fromoNode.ChildNodeIndex;
+            IsRunning = fromoNode.IsRunning;
+            Data = fromoNode.Data;
+            Node = fromoNode.Node;
+        }
     }
 }
